@@ -1,0 +1,7 @@
+bin/*
+test/bin/*
+.vscode/
+.cache/
+compile_commands.json
+\#*#
+.#*

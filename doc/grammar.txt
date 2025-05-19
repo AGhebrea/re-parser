@@ -1,0 +1,51 @@
+# Non Terminals                         |   START
+<OptRegularExpression> ->               |   ...
+    <RegularExpression>                 |   { ^, (, [, <Character> }
+    | ?                                 |   { eof }
+<RegularExpression> ->                  |   ...
+    <Alternation>                       |   { ^, (, [, <Character> }
+<Alternation> ->                        |   ...
+    <Concatenation> <AlternationPrime>  |   { ^, (, [, <Character> }
+<AlternationPrime> ->                   |   ...
+    \| <Alternation>                    |   { \| }
+    | ?                                 |   { eof, ) }
+<Concatenation> ->                      |   ...
+    <Closure> <Concatenation>           |   { ^, (, [, <Character> }
+    | ?                                 |   { eof, ), \| }
+<Closure> ->                            |   ...
+    <Complement> <ClosurePrime>         |   { ^, (, [, <Character> }
+<ClosurePrime> ->                       |   ...
+    *                                   |   { * }
+    | +                                 |   { + }
+    | { <UInt> }                        |   { \{ }
+    | ?                                 |   { eof, ), \|, ^, (, [, <Character> }
+<Complement> ->                         |   ...
+    ^ <Term>                            |   { ^ }
+    | <Term>                            |   { (, [, <Character> }
+<Term> ->                               |   ...
+    ( <RegularExpression> )             |   { ( }
+    | <CaptureGroup>                    |   { [ }
+    | <Chacter>                         |   { <Character> }
+<CaptureGroup> ->                       |   ...
+    [ <Character>...<Character> ]       |   { [ }
+
+# Terminals
+<UInt> -> (0|[1...9][0...9]*)
+<EpsilonCharacter> -> ?
+<Character> -> 
+    <EpsilonCharacter>
+    | ^(<Specials>)
+    | <Escape> <Specials>
+<Escape> -> \\
+<Specials> -> 
+    \(
+    | \)
+    | \[
+    | \]
+    | \<EpsilonCharacter>
+    | \*
+    | \+
+    | \|
+    | \{
+    | \}
+    | \.
