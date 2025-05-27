@@ -333,19 +333,19 @@ fail:
     return NULL;
 }
 
+/* NOTE: i modified this function to break the usual pattern in order to not
+ * generate extra nodes in the AST. */
 expressionAlternation_t* parseAlternationPrime()
 {
     expressionAlternation_t* expression = NULL;
     token_t token;
     lexer_peekToken(&token);
-    expression = ctor_expressionAlternation();
 
     switch(token.major){
     case tokenMajor_Or:
-        expression->type = typeAlternation_Alternation;
         lexer_nextToken(&token);
-        expression->alternation = parseAlternation();
-        if(expression->alternation == NULL){
+        expression = parseAlternation();
+        if(expression == NULL){
             printError("Expected Alternation");
             goto fail;
         }
@@ -353,6 +353,7 @@ expressionAlternation_t* parseAlternationPrime()
     case tokenMajor_CloseParen:
     case tokenMajor_ExpressionSeparator:
     case tokenMajor_EOF:
+        expression = ctor_expressionAlternation();
         expression->type = typeAlternation_Empty;
         break;
     default:
@@ -391,8 +392,8 @@ expressionAlternation_t* parseAlternation()
             printError("Expected Alternation");
             goto fail;
         }
-        if(expression->alternation->type == typeAlternation_Empty)
-            expression->type = typeAlternation_Concatenation;
+        // if(expression->alternation->type == typeAlternation_Empty)
+        //     expression->type = typeAlternation_Concatenation;
         break;
     default:
         printError("Unknown Expression Type");

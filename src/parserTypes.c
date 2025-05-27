@@ -91,9 +91,6 @@ void dtor_expressionAlternation(expressionAlternation_t* data)
         return;
     
     switch(data->type){
-    case typeAlternation_Alternation:
-        dtor_expressionAlternation(data->alternation);
-        break;
     case typeAlternation_Concatenation:
         dtor_expressionConcatenation(data->concatenation);
         break;
@@ -119,8 +116,6 @@ void dtor_expressionConcatenation(expressionConcatenation_t* data)
     
     switch(data->type){
     case typeConcatenation_Closure:
-        dtor_expressionClosure(data->closure);
-        break;
     case typeConcatenation_Concatentation:
         dtor_expressionClosure(data->closure);
         dtor_expressionConcatenation(data->concatenation);
@@ -365,10 +360,6 @@ void dbg_printAlternation(expressionAlternation_t* expression, size_t level)
         ccLogWarn("\n%stypeAlternation_NULL", preamble);
         break;
     case typeAlternation_Empty:
-        break;
-    case typeAlternation_Alternation:
-        ccLogError("typeAlternation_Alternation printed");
-        dbg_printAlternation(expression->alternation, level);
         break;
     case typeAlternation_Concatenation:
         dbg_printConcatenation(expression->concatenation, level);

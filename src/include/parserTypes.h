@@ -32,7 +32,6 @@ struct expressionRegularExpression{
 enum typeAlternation{
     typeAlternation_NULL = 0,
     typeAlternation_Empty,
-    typeAlternation_Alternation,
     typeAlternation_Concatenation,
     typeAlternation_AlternationConcatenation,
 };

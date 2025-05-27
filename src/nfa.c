@@ -21,15 +21,6 @@ void buildNFA_Alternation(ccSet_t* nfa, expressionAlternation_t* expression)
         /* do we do anything here ? */
         buildNFA_Alternation(nfa, expression->alternation);
         break;
-    case typeAlternation_Alternation:
-        /* NOTE: i believe that it's bad design on my part that we can have just alternation. 
-         * if we have typeAlternation_Alternation type, it will contain either only 
-         * typeAlternation_Concatenation, or typeAlternation_AlternationConcatenation, 
-         * in theory it is just an extra useless node. Maybe it is just a quirk of the parsing
-         * method and it cannot be easily avoided. Also "compressing" the tree by eliminating 
-         * such nodes seems a bit too much */
-        buildNFA_Alternation(nfa, expression->alternation);
-        break;
     case typeAlternation_Concatenation:
         buildNFA_Concatenation(nfa, expression->concatenation);
         break;

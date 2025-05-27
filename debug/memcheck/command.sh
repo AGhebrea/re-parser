@@ -1,1 +1,1 @@
-valgrind --leak-check=full          --show-leak-kinds=all          --track-origins=yes          --verbose          --log-file=./memcheck/valgrind-out.txt          ./bin/executable
+valgrind --leak-check=full          --show-leak-kinds=all          --track-origins=yes          --verbose          --log-file=./debug/memcheck/valgrind-out.txt          ./bin/executable

@@ -1,249 +1,152 @@
-==50838== Memcheck, a memory error detector
-==50838== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==50838== Using Valgrind-3.24.0-fcdaa47426-20241101 and LibVEX; rerun with -h for copyright info
-==50838== Command: ./bin/executable
-==50838== Parent PID: 41141
-==50838== 
---50838-- 
---50838-- Valgrind options:
---50838--    --leak-check=full
---50838--    --show-leak-kinds=all
---50838--    --track-origins=yes
---50838--    --verbose
---50838--    --log-file=./memcheck/valgrind-out.txt
---50838-- Contents of /proc/version:
---50838--   Linux version 6.11.7-arch1-1 (linux@archlinux) (gcc (GCC) 14.2.1 20240910, GNU ld (GNU Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Fri, 08 Nov 2024 17:57:56 +0000
---50838-- 
---50838-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand-rdseed-fma
---50838-- Page sizes: currently 4096, max supported 4096
---50838-- Valgrind library directory: /usr/lib/valgrind
---50838-- Reading syms from /home/alex/software/projects/compilerTheory/compiler/research/lexers/re-parser/bin/executable
---50838-- Reading syms from /usr/lib/ld-linux-x86-64.so.2
-==50838== Downloading debug info for /usr/lib/ld-linux-x86-64.so.2...
---50838--   Considering /home/alex/.cache/debuginfod_client/5fced0dbad50aee336716c4a6de8bf24e7e1f5d9/debuginfo ..
---50838--   .. CRC is valid
-==50838== Successfully downloaded debug file for /usr/lib/ld-linux-x86-64.so.2
---50838-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
---50838--    object doesn't have a dynamic symbol table
---50838-- Scheduler: using generic scheduler lock implementation.
---50838-- Reading suppressions file: /usr/lib/valgrind/default.supp
-==50838== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-50838-by-alex-on-???
-==50838== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-50838-by-alex-on-???
-==50838== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-50838-by-alex-on-???
-==50838== 
-==50838== TO CONTROL THIS PROCESS USING vgdb (which you probably
-==50838== don't want to do, unless you know exactly what you're doing,
-==50838== or are doing some strange experiment):
-==50838==   /usr/lib/valgrind/../../bin/vgdb --pid=50838 ...command...
-==50838== 
-==50838== TO DEBUG THIS PROCESS USING GDB: start GDB like this
-==50838==   /path/to/gdb ./bin/executable
-==50838== and then give GDB the following command
-==50838==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=50838
-==50838== --pid is optional if only one valgrind process is running
-==50838== 
-==50838== Downloading debug info for /usr/lib/valgrind/memcheck-amd64-linux...
---50838--   Considering /home/alex/.cache/debuginfod_client/94b7675525ca0c5d83803686cc70a920784883ec/debuginfo ..
---50838--   .. CRC is valid
-==50838== Successfully downloaded debug file for /usr/lib/valgrind/memcheck-amd64-linux
---50838-- Warning: cross-CU LIMITATION: some inlined fn names
---50838-- might be shown as UnknownInlinedFun
---50838-- REDIR: 0x4027320 (ld-linux-x86-64.so.2:strlen) redirected to 0x5821f294 (vgPlain_amd64_linux_REDIR_FOR_strlen)
---50838-- REDIR: 0x4025ce0 (ld-linux-x86-64.so.2:strcmp) redirected to 0x5821f2ae (vgPlain_amd64_linux_REDIR_FOR_strcmp)
---50838-- REDIR: 0x4025ab0 (ld-linux-x86-64.so.2:index) redirected to 0x5821f2c9 (vgPlain_amd64_linux_REDIR_FOR_index)
---50838-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
---50838-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
-==50838== WARNING: new redirection conflicts with existing -- ignoring it
---50838--     old: 0x04025ce0 (strcmp              ) R-> (0000.0) 0x5821f2ae vgPlain_amd64_linux_REDIR_FOR_strcmp
-==50838== Downloading debug info for /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so...
---50838--   Considering /home/alex/.cache/debuginfod_client/45117f4dbf5e6b56cef25bc73e96245139503c39/debuginfo ..
---50838--   .. CRC is valid
-==50838== Successfully downloaded debug file for /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
---50838--     new: 0x04025ce0 (strcmp              ) R-> (2016.0) 0x04850150 strcmp
-==50838== WARNING: new redirection conflicts with existing -- ignoring it
---50838--     old: 0x04027320 (strlen              ) R-> (0000.0) 0x5821f294 vgPlain_amd64_linux_REDIR_FOR_strlen
---50838--     new: 0x04027320 (strlen              ) R-> (2007.0) 0x0484edc0 strlen
---50838-- REDIR: 0x4025110 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x48548a0 (mempcpy)
---50838-- Reading syms from /usr/lib/libc.so.6
-==50838== Downloading debug info for /usr/lib/libc.so.6...
---50838--   Considering /home/alex/.cache/debuginfod_client/0b707b217b15b106c25fe51df3724b25848310c0/debuginfo ..
---50838--   .. CRC is valid
-==50838== Successfully downloaded debug file for /usr/lib/libc.so.6
---50838-- REDIR: 0x40274c0 (ld-linux-x86-64.so.2:strncmp) redirected to 0x484f8c0 (strncmp)
-==50838== Downloading debug info for /usr/lib/valgrind/vgpreload_core-amd64-linux.so...
---50838--   Considering /home/alex/.cache/debuginfod_client/93060faeaf32d027082dabc8341faf32b7b32840/debuginfo ..
---50838--   .. CRC is valid
-==50838== Successfully downloaded debug file for /usr/lib/valgrind/vgpreload_core-amd64-linux.so
---50838-- REDIR: 0x4935d10 (libc.so.6:strncasecmp) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4932e20 (libc.so.6:mempcpy) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4949610 (libc.so.6:wcpncpy) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x49331c0 (libc.so.6:stpcpy) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x49adce0 (libc.so.6:__memmove_chk) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4957dc0 (libc.so.6:wmemcmp) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4933e90 (libc.so.6:strcat) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4932490 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x494b4c0 (libc.so.6:wcsncpy) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x49adbc0 (libc.so.6:__memcpy_chk) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
-==50838== WARNING: new redirection conflicts with existing -- ignoring it
---50838--     old: 0x049f4290 (__memcpy_chk_avx_una) R-> (2024.0) 0x048542b0 __memmove_chk
---50838--     new: 0x049f4290 (__memcpy_chk_avx_una) R-> (2030.0) 0x048549b0 __memcpy_chk
---50838-- REDIR: 0x494ac10 (libc.so.6:wcslen) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4932fd0 (libc.so.6:memset) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x494b520 (libc.so.6:wcsnlen) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4936010 (libc.so.6:strnlen) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x49360a0 (libc.so.6:strpbrk) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4934010 (libc.so.6:strcmp) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4932f40 (libc.so.6:memrchr) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4949a00 (libc.so.6:wcschr) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4933f00 (libc.so.6:index) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x49360d0 (libc.so.6:rindex) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4949ab0 (libc.so.6:wcscmp) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4933230 (libc.so.6:stpncpy) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4957d40 (libc.so.6:wmemchr) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4935eb0 (libc.so.6:strncmp) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4933290 (libc.so.6:strcasecmp) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4935280 (libc.so.6:strcspn) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x494a9e0 (libc.so.6:wcscpy) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4935db0 (libc.so.6:strncasecmp_l) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4933f80 (libc.so.6:strchrnul) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x49323a0 (libc.so.6:bcmp) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4935210 (libc.so.6:strcpy) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4933330 (libc.so.6:strcasecmp_l) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4935c80 (libc.so.6:strlen) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4935f50 (libc.so.6:strncpy) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x4932d00 (libc.so.6:memmove) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
-==50838== Preferring higher priority redirection:
---50838--     old: 0x049f42c0 (__memcpy_avx_unalign) R-> (2018.0) 0x04851820 __memcpy_avx_unaligned_erms
---50838--     new: 0x049f42c0 (__memcpy_avx_unalign) R-> (2018.1) 0x048535b0 memmove
---50838-- REDIR: 0x4932320 (libc.so.6:memchr) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x49362d0 (libc.so.6:strspn) redirected to 0x483a1a0 (_vgnU_ifunc_wrapper)
---50838-- REDIR: 0x49f8ef0 (libc.so.6:__strrchr_avx2) redirected to 0x484e5a0 (rindex)
---50838-- REDIR: 0x492e190 (libc.so.6:malloc) redirected to 0x4845730 (malloc)
---50838-- REDIR: 0x49f6460 (libc.so.6:__strchr_avx2) redirected to 0x484e7e0 (index)
---50838-- REDIR: 0x49f4280 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x4854460 (mempcpy)
---50838-- REDIR: 0x492e8b0 (libc.so.6:free) redirected to 0x4848880 (free)
---50838-- REDIR: 0x49f7040 (libc.so.6:__strlen_avx2) redirected to 0x484eca0 (strlen)
---50838-- REDIR: 0x49f4cc0 (libc.so.6:__memset_avx2_unaligned_erms) redirected to 0x4853470 (memset)
---50838-- REDIR: 0x49f66a0 (libc.so.6:__strchrnul_avx2) redirected to 0x4854330 (strchrnul)
---50838-- REDIR: 0x49f42c0 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x48535b0 (memmove)
-==50838== Conditional jump or move depends on uninitialised value(s)
-==50838==    at 0x10ADD1: dtor_expressionConcatenation (parserTypes.c:117)
-==50838==    by 0x10AD5B: dtor_expressionAlternation (parserTypes.c:101)
-==50838==    by 0x10AD6B: dtor_expressionAlternation (parserTypes.c:102)
-==50838==    by 0x10ACCD: dtor_expressionRegularExpression (parserTypes.c:78)
-==50838==    by 0x10AFB9: dtor_expressionTerm (parserTypes.c:186)
-==50838==    by 0x10AF1B: dtor_expressionComplement (parserTypes.c:167)
-==50838==    by 0x10AE92: dtor_expressionClosure (parserTypes.c:147)
-==50838==    by 0x10ADF9: dtor_expressionConcatenation (parserTypes.c:123)
-==50838==    by 0x10AD5B: dtor_expressionAlternation (parserTypes.c:101)
-==50838==    by 0x10ACCD: dtor_expressionRegularExpression (parserTypes.c:78)
-==50838==    by 0x10AB56: parse (parser.c:510)
-==50838==    by 0x10926B: main (main.c:5)
-==50838==  Uninitialised value was created by a heap allocation
-==50838==    at 0x48457A8: malloc (vg_replace_malloc.c:446)
-==50838==    by 0x10ABB2: ctor_expressionAlternation (parserTypes.c:29)
-==50838==    by 0x10A685: parseAlternationPrime (parser.c:341)
-==50838==    by 0x10A7E7: parseAlternation (parser.c:389)
-==50838==    by 0x10A8F2: parseRegularExpressionPrime (parser.c:423)
-==50838==    by 0x10A0EF: parseTerm (parser.c:138)
-==50838==    by 0x10A2DD: parseComplement (parser.c:203)
-==50838==    by 0x10A3A6: parseClosure (parser.c:232)
-==50838==    by 0x10A594: parseConcatenation (parser.c:305)
-==50838==    by 0x10A7B7: parseAlternation (parser.c:384)
-==50838==    by 0x10A8F2: parseRegularExpressionPrime (parser.c:423)
-==50838==    by 0x10A9F4: parseRegularExpression (parser.c:458)
-==50838== 
-==50838== Conditional jump or move depends on uninitialised value(s)
-==50838==    at 0x10ADD1: dtor_expressionConcatenation (parserTypes.c:117)
-==50838==    by 0x10AD5B: dtor_expressionAlternation (parserTypes.c:101)
-==50838==    by 0x10AD6B: dtor_expressionAlternation (parserTypes.c:102)
-==50838==    by 0x10AD6B: dtor_expressionAlternation (parserTypes.c:102)
-==50838==    by 0x10AD6B: dtor_expressionAlternation (parserTypes.c:102)
-==50838==    by 0x10ACCD: dtor_expressionRegularExpression (parserTypes.c:78)
-==50838==    by 0x10AFB9: dtor_expressionTerm (parserTypes.c:186)
-==50838==    by 0x10AF1B: dtor_expressionComplement (parserTypes.c:167)
-==50838==    by 0x10AE92: dtor_expressionClosure (parserTypes.c:147)
-==50838==    by 0x10ADF9: dtor_expressionConcatenation (parserTypes.c:123)
-==50838==    by 0x10AD5B: dtor_expressionAlternation (parserTypes.c:101)
-==50838==    by 0x10ACCD: dtor_expressionRegularExpression (parserTypes.c:78)
-==50838==  Uninitialised value was created by a heap allocation
-==50838==    at 0x48457A8: malloc (vg_replace_malloc.c:446)
-==50838==    by 0x10ABB2: ctor_expressionAlternation (parserTypes.c:29)
-==50838==    by 0x10A685: parseAlternationPrime (parser.c:341)
-==50838==    by 0x10A7E7: parseAlternation (parser.c:389)
-==50838==    by 0x10A6CA: parseAlternationPrime (parser.c:347)
-==50838==    by 0x10A7E7: parseAlternation (parser.c:389)
-==50838==    by 0x10A8F2: parseRegularExpressionPrime (parser.c:423)
-==50838==    by 0x10A0EF: parseTerm (parser.c:138)
-==50838==    by 0x10A2DD: parseComplement (parser.c:203)
-==50838==    by 0x10A3A6: parseClosure (parser.c:232)
-==50838==    by 0x10A594: parseConcatenation (parser.c:305)
-==50838==    by 0x10A7B7: parseAlternation (parser.c:384)
-==50838== 
-==50838== 
-==50838== HEAP SUMMARY:
-==50838==     in use at exit: 0 bytes in 0 blocks
-==50838==   total heap usage: 512 allocs, 512 frees, 16,606 bytes allocated
-==50838== 
-==50838== All heap blocks were freed -- no leaks are possible
-==50838== 
-==50838== ERROR SUMMARY: 6 errors from 2 contexts (suppressed: 0 from 0)
-==50838== 
-==50838== 1 errors in context 1 of 2:
-==50838== Conditional jump or move depends on uninitialised value(s)
-==50838==    at 0x10ADD1: dtor_expressionConcatenation (parserTypes.c:117)
-==50838==    by 0x10AD5B: dtor_expressionAlternation (parserTypes.c:101)
-==50838==    by 0x10AD6B: dtor_expressionAlternation (parserTypes.c:102)
-==50838==    by 0x10AD6B: dtor_expressionAlternation (parserTypes.c:102)
-==50838==    by 0x10AD6B: dtor_expressionAlternation (parserTypes.c:102)
-==50838==    by 0x10ACCD: dtor_expressionRegularExpression (parserTypes.c:78)
-==50838==    by 0x10AFB9: dtor_expressionTerm (parserTypes.c:186)
-==50838==    by 0x10AF1B: dtor_expressionComplement (parserTypes.c:167)
-==50838==    by 0x10AE92: dtor_expressionClosure (parserTypes.c:147)
-==50838==    by 0x10ADF9: dtor_expressionConcatenation (parserTypes.c:123)
-==50838==    by 0x10AD5B: dtor_expressionAlternation (parserTypes.c:101)
-==50838==    by 0x10ACCD: dtor_expressionRegularExpression (parserTypes.c:78)
-==50838==  Uninitialised value was created by a heap allocation
-==50838==    at 0x48457A8: malloc (vg_replace_malloc.c:446)
-==50838==    by 0x10ABB2: ctor_expressionAlternation (parserTypes.c:29)
-==50838==    by 0x10A685: parseAlternationPrime (parser.c:341)
-==50838==    by 0x10A7E7: parseAlternation (parser.c:389)
-==50838==    by 0x10A6CA: parseAlternationPrime (parser.c:347)
-==50838==    by 0x10A7E7: parseAlternation (parser.c:389)
-==50838==    by 0x10A8F2: parseRegularExpressionPrime (parser.c:423)
-==50838==    by 0x10A0EF: parseTerm (parser.c:138)
-==50838==    by 0x10A2DD: parseComplement (parser.c:203)
-==50838==    by 0x10A3A6: parseClosure (parser.c:232)
-==50838==    by 0x10A594: parseConcatenation (parser.c:305)
-==50838==    by 0x10A7B7: parseAlternation (parser.c:384)
-==50838== 
-==50838== 
-==50838== 5 errors in context 2 of 2:
-==50838== Conditional jump or move depends on uninitialised value(s)
-==50838==    at 0x10ADD1: dtor_expressionConcatenation (parserTypes.c:117)
-==50838==    by 0x10AD5B: dtor_expressionAlternation (parserTypes.c:101)
-==50838==    by 0x10AD6B: dtor_expressionAlternation (parserTypes.c:102)
-==50838==    by 0x10ACCD: dtor_expressionRegularExpression (parserTypes.c:78)
-==50838==    by 0x10AFB9: dtor_expressionTerm (parserTypes.c:186)
-==50838==    by 0x10AF1B: dtor_expressionComplement (parserTypes.c:167)
-==50838==    by 0x10AE92: dtor_expressionClosure (parserTypes.c:147)
-==50838==    by 0x10ADF9: dtor_expressionConcatenation (parserTypes.c:123)
-==50838==    by 0x10AD5B: dtor_expressionAlternation (parserTypes.c:101)
-==50838==    by 0x10ACCD: dtor_expressionRegularExpression (parserTypes.c:78)
-==50838==    by 0x10AB56: parse (parser.c:510)
-==50838==    by 0x10926B: main (main.c:5)
-==50838==  Uninitialised value was created by a heap allocation
-==50838==    at 0x48457A8: malloc (vg_replace_malloc.c:446)
-==50838==    by 0x10ABB2: ctor_expressionAlternation (parserTypes.c:29)
-==50838==    by 0x10A685: parseAlternationPrime (parser.c:341)
-==50838==    by 0x10A7E7: parseAlternation (parser.c:389)
-==50838==    by 0x10A8F2: parseRegularExpressionPrime (parser.c:423)
-==50838==    by 0x10A0EF: parseTerm (parser.c:138)
-==50838==    by 0x10A2DD: parseComplement (parser.c:203)
-==50838==    by 0x10A3A6: parseClosure (parser.c:232)
-==50838==    by 0x10A594: parseConcatenation (parser.c:305)
-==50838==    by 0x10A7B7: parseAlternation (parser.c:384)
-==50838==    by 0x10A8F2: parseRegularExpressionPrime (parser.c:423)
-==50838==    by 0x10A9F4: parseRegularExpression (parser.c:458)
-==50838== 
-==50838== ERROR SUMMARY: 6 errors from 2 contexts (suppressed: 0 from 0)
+==15000== Memcheck, a memory error detector
+==15000== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==15000== Using Valgrind-3.25.1-4441567fbe-20250520 and LibVEX; rerun with -h for copyright info
+==15000== Command: ./bin/executable
+==15000== Parent PID: 1713
+==15000== 
+--15000-- 
+--15000-- Valgrind options:
+--15000--    --leak-check=full
+--15000--    --show-leak-kinds=all
+--15000--    --track-origins=yes
+--15000--    --verbose
+--15000--    --log-file=./debug/memcheck/valgrind-out.txt
+--15000-- Contents of /proc/version:
+--15000--   Linux version 6.14.7-arch2-1 (linux@archlinux) (gcc (GCC) 15.1.1 20250425, GNU ld (GNU Binutils) 2.44.0) #1 SMP PREEMPT_DYNAMIC Thu, 22 May 2025 05:37:49 +0000
+--15000-- 
+--15000-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand-rdseed-fma
+--15000-- Page sizes: currently 4096, max supported 4096
+--15000-- Valgrind library directory: /usr/lib/valgrind
+--15000-- Reading syms from /home/alex/software/projects/compilerTheory/compiler/research/lexers/re-parser/bin/executable
+--15000-- Reading syms from /usr/lib/ld-linux-x86-64.so.2
+==15000== Downloading debug info for /usr/lib/ld-linux-x86-64.so.2...
+--15000--   Considering /home/alex/.cache/debuginfod_client/880803fb40ebf69518d6a56628ce2be9c5f5c89b/debuginfo ..
+--15000--   .. CRC is valid
+==15000== Successfully downloaded debug file for /usr/lib/ld-linux-x86-64.so.2
+--15000-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
+--15000--    object doesn't have a dynamic symbol table
+--15000-- Scheduler: using generic scheduler lock implementation.
+--15000-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==15000== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-15000-by-alex-on-???
+==15000== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-15000-by-alex-on-???
+==15000== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-15000-by-alex-on-???
+==15000== 
+==15000== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==15000== don't want to do, unless you know exactly what you're doing,
+==15000== or are doing some strange experiment):
+==15000==   /usr/lib/valgrind/../../bin/vgdb --pid=15000 ...command...
+==15000== 
+==15000== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==15000==   /path/to/gdb ./bin/executable
+==15000== and then give GDB the following command
+==15000==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=15000
+==15000== --pid is optional if only one valgrind process is running
+==15000== 
+==15000== Downloading debug info for /usr/lib/valgrind/memcheck-amd64-linux...
+--15000--   Considering /home/alex/.cache/debuginfod_client/d3be6428a75911b4e88b7f513aaf1d171beabc21/debuginfo ..
+--15000--   .. CRC is valid
+==15000== Successfully downloaded debug file for /usr/lib/valgrind/memcheck-amd64-linux
+--15000-- Warning: cross-CU LIMITATION: some inlined fn names
+--15000-- might be shown as UnknownInlinedFun
+--15000-- REDIR: 0x4031520 (ld-linux-x86-64.so.2:strlen) redirected to 0x5823f6d2 (vgPlain_amd64_linux_REDIR_FOR_strlen)
+--15000-- REDIR: 0x402fee0 (ld-linux-x86-64.so.2:strcmp) redirected to 0x5823f6ec (vgPlain_amd64_linux_REDIR_FOR_strcmp)
+--15000-- REDIR: 0x402fcb0 (ld-linux-x86-64.so.2:index) redirected to 0x5823f725 (vgPlain_amd64_linux_REDIR_FOR_index)
+--15000-- REDIR: 0x402f040 (ld-linux-x86-64.so.2:bcmp) redirected to 0x5823f707 (vgPlain_amd64_linux_REDIR_FOR_memcmp)
+--15000-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+--15000-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+==15000== WARNING: new redirection conflicts with existing -- ignoring it
+--15000--     old: 0x0402fee0 (strcmp              ) R-> (0000.0) 0x5823f6ec vgPlain_amd64_linux_REDIR_FOR_strcmp
+==15000== Downloading debug info for /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so...
+--15000--   Considering /home/alex/.cache/debuginfod_client/403753d6c7387bebdec4dfaaa93f7790525577d9/debuginfo ..
+--15000--   .. CRC is valid
+==15000== Successfully downloaded debug file for /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+--15000--     new: 0x0402fee0 (strcmp              ) R-> (2016.0) 0x0485a2f0 strcmp
+==15000== WARNING: new redirection conflicts with existing -- ignoring it
+--15000--     old: 0x04031520 (strlen              ) R-> (0000.0) 0x5823f6d2 vgPlain_amd64_linux_REDIR_FOR_strlen
+--15000--     new: 0x04031520 (strlen              ) R-> (2007.0) 0x04858e80 strlen
+--15000-- REDIR: 0x402f310 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x485ea80 (mempcpy)
+--15000-- Reading syms from /usr/lib/libc.so.6
+==15000== Downloading debug info for /usr/lib/libc.so.6...
+--15000--   Considering /home/alex/.cache/debuginfod_client/468e3585c794491a48ea75fceb9e4d6b1464fc35/debuginfo ..
+--15000--   .. CRC is valid
+==15000== Successfully downloaded debug file for /usr/lib/libc.so.6
+--15000-- REDIR: 0x40316c0 (ld-linux-x86-64.so.2:strncmp) redirected to 0x4859a50 (strncmp)
+==15000== Downloading debug info for /usr/lib/valgrind/vgpreload_core-amd64-linux.so...
+--15000--   Considering /home/alex/.cache/debuginfod_client/0c51105d9993ab51719a1f2cded9603486a0d0b6/debuginfo ..
+--15000--   .. CRC is valid
+==15000== Successfully downloaded debug file for /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+--15000-- REDIR: 0x4942140 (libc.so.6:strncasecmp) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x493f3d0 (libc.so.6:mempcpy) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4955890 (libc.so.6:wcpncpy) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x493f740 (libc.so.6:stpcpy) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x49b9320 (libc.so.6:__memmove_chk) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4963e20 (libc.so.6:wmemcmp) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4940390 (libc.so.6:strcat) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x493ea00 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4957740 (libc.so.6:wcsncpy) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x49b9210 (libc.so.6:__memcpy_chk) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+==15000== WARNING: new redirection conflicts with existing -- ignoring it
+--15000--     old: 0x049fff50 (__memcpy_chk_avx_una) R-> (2024.0) 0x0485e460 __memmove_chk
+--15000--     new: 0x049fff50 (__memcpy_chk_avx_una) R-> (2030.0) 0x0485eb90 __memcpy_chk
+--15000-- REDIR: 0x4956e80 (libc.so.6:wcslen) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x493f560 (libc.so.6:memset) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x49577b0 (libc.so.6:wcsnlen) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4942440 (libc.so.6:strnlen) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x49424c0 (libc.so.6:strpbrk) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4940500 (libc.so.6:strcmp) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x493f4e0 (libc.so.6:memrchr) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4955ca0 (libc.so.6:wcschr) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4940400 (libc.so.6:index) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x49424f0 (libc.so.6:rindex) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4955d40 (libc.so.6:wcscmp) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x493f7b0 (libc.so.6:stpncpy) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4963da0 (libc.so.6:wmemchr) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x49422e0 (libc.so.6:strncmp) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x493f810 (libc.so.6:strcasecmp) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x49415e0 (libc.so.6:strcspn) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4956c60 (libc.so.6:wcscpy) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x49421e0 (libc.so.6:strncasecmp_l) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4940480 (libc.so.6:strchrnul) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x493e910 (libc.so.6:bcmp) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4941570 (libc.so.6:strcpy) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x493f8b0 (libc.so.6:strcasecmp_l) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x49420c0 (libc.so.6:strlen) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4942380 (libc.so.6:strncpy) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x493f2c0 (libc.so.6:memmove) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+==15000== Preferring higher priority redirection:
+--15000--     old: 0x049fff80 (__memcpy_avx_unalign) R-> (2018.0) 0x0485b9a0 __memcpy_avx_unaligned_erms
+--15000--     new: 0x049fff80 (__memcpy_avx_unalign) R-> (2018.1) 0x0485d730 memmove
+--15000-- REDIR: 0x493e890 (libc.so.6:memchr) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x49426f0 (libc.so.6:strspn) redirected to 0x48441a0 (_vgnU_ifunc_wrapper)
+--15000-- REDIR: 0x4a04bb0 (libc.so.6:__strrchr_avx2) redirected to 0x48585e0 (rindex)
+--15000-- REDIR: 0x493a610 (libc.so.6:malloc) redirected to 0x484f730 (malloc)
+--15000-- REDIR: 0x4a02120 (libc.so.6:__strchr_avx2) redirected to 0x4858860 (index)
+--15000-- REDIR: 0x49fff40 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x485e640 (mempcpy)
+--15000-- REDIR: 0x493ad60 (libc.so.6:free) redirected to 0x4852880 (free)
+--15000-- REDIR: 0x4a02d00 (libc.so.6:__strlen_avx2) redirected to 0x4858d60 (strlen)
+--15000-- REDIR: 0x4a00980 (libc.so.6:__memset_avx2_unaligned_erms) redirected to 0x485d600 (memset)
+--15000-- REDIR: 0x4a02360 (libc.so.6:__strchrnul_avx2) redirected to 0x485e510 (strchrnul)
+--15000-- REDIR: 0x49fff80 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x485d730 (memmove)
+==15000== 
+==15000== HEAP SUMMARY:
+==15000==     in use at exit: 240 bytes in 10 blocks
+==15000==   total heap usage: 528 allocs, 518 frees, 17,320 bytes allocated
+==15000== 
+==15000== Searching for pointers to 10 not-freed blocks
+==15000== Checked 89,760 bytes
+==15000== 
+==15000== 240 bytes in 10 blocks are definitely lost in loss record 1 of 1
+==15000==    at 0x484F7A8: malloc (vg_replace_malloc.c:446)
+==15000==    by 0x4004183: ccSet_ctor (ccSet.c:8)
+==15000==    by 0x4001F23: buildNFA (nfa.c:62)
+==15000==    by 0x4002DAC: parse (parser.c:508)
+==15000==    by 0x4001285: main (main.c:7)
+==15000== 
+==15000== LEAK SUMMARY:
+==15000==    definitely lost: 240 bytes in 10 blocks
+==15000==    indirectly lost: 0 bytes in 0 blocks
+==15000==      possibly lost: 0 bytes in 0 blocks
+==15000==    still reachable: 0 bytes in 0 blocks
+==15000==         suppressed: 0 bytes in 0 blocks
+==15000== 
+==15000== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
