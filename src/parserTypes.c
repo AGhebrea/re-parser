@@ -205,9 +205,6 @@ void dtor_expressionTerm(expressionTerm_t* data)
 
 void dtor_expressionCaptureGroup(expressionCaptureGroup_t* data)
 {
-    if(data == NULL)
-        return;
-
     free(data);
 }
 
@@ -370,6 +367,7 @@ void dbg_printAlternation(expressionAlternation_t* expression, size_t level)
     case typeAlternation_Empty:
         break;
     case typeAlternation_Alternation:
+        ccLogError("typeAlternation_Alternation printed");
         dbg_printAlternation(expression->alternation, level);
         break;
     case typeAlternation_Concatenation:

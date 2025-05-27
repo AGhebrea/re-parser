@@ -497,19 +497,18 @@ void parse(char* filename)
         regularExpression = parseRegularExpression();
         if(regularExpression == NULL){
             ccLogError("regularExpression == NULL");
-            dtor_expressionRegularExpression(regularExpression);
             break;
         }else if(regularExpression->type == typeRegularExpression_EOF){
-            dtor_expressionRegularExpression(regularExpression);
             break;
         }else{
             if(regularExpression->type != typeRegularExpression_Empty){
                 dbg_printRE(regularExpression);
-                buildNFA(regularExpression);
             }
+            buildNFA(regularExpression);
             dtor_expressionRegularExpression(regularExpression);
         }
     }
 
+    dtor_expressionRegularExpression(regularExpression);
     dtor_lexer();
 }

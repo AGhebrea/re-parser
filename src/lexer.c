@@ -55,8 +55,7 @@ void ctor_lexer(char* filename)
 
 void dtor_lexer()
 {
-    if(lexer.buffer != NULL)
-        free(lexer.buffer);
+    free(lexer.buffer);
     if(lexer.file != NULL)
         fclose(lexer.file);
 }
