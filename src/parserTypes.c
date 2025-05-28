@@ -116,7 +116,7 @@ void dtor_expressionConcatenation(expressionConcatenation_t* data)
     
     switch(data->type){
     case typeConcatenation_Closure:
-    case typeConcatenation_Concatentation:
+    case typeConcatenation_ConcatentationClosure:
         dtor_expressionClosure(data->closure);
         dtor_expressionConcatenation(data->concatenation);
         break;
@@ -335,7 +335,7 @@ void dbg_printConcatenation(expressionConcatenation_t* expression, size_t level)
         break;
     case typeConcatenation_Empty:
         break;
-    case typeConcatenation_Concatentation:
+    case typeConcatenation_ConcatentationClosure:
         printf("%sConcatenation\n", preamble);
         dbg_printClosure(expression->closure, level + 1);
         dbg_printConcatenation(expression->concatenation, level + 1);

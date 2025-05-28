@@ -301,7 +301,7 @@ expressionConcatenation_t* parseConcatenation()
     case tokenMajor_OpenBracket:
     case tokenMajor_Character:
     case tokenMajor_Epsilon:
-        expression->type = typeConcatenation_Concatentation;
+        expression->type = typeConcatenation_ConcatentationClosure;
         expression->closure = parseClosure();
         if(expression->closure == NULL){
             printError("Expected Closure");

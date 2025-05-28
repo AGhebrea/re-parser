@@ -44,7 +44,7 @@ struct expressionAlternation{
 enum typeConcatenation{
     typeConcatenation_NULL = 0,
     typeConcatenation_Empty,
-    typeConcatenation_Concatentation,
+    typeConcatenation_ConcatentationClosure,
     typeConcatenation_Closure,
 };
 struct expressionConcatenation{
