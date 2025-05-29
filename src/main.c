@@ -3,7 +3,7 @@
 
 int main()
 {
-    ccLog_setLogLevel(ccLogLevels_Trace);
+    ccLog_setLogLevel(ccLogLevels_Off);
     parse("./data/sample1.cfg");
     return 0;
 }

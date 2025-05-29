@@ -48,6 +48,8 @@ nfa_t* buildNFA_Concatenation(int* indexState, expressionConcatenation_t* expres
 nfa_t* buildNFA_Alternation(int* indexState, expressionAlternation_t* expression);
 nfa_t* buildNFA_RegularExpression(int* indexState, expressionRegularExpression_t* expression);
 
+void nfa_shallowDtor(nfa_t* data);
+
 void dbg_printNFA(nfa_t* nfa);
 
 nfa_t* copyNFA(int* indexState, nfa_t* nfa){
@@ -86,6 +88,7 @@ nfa_t* copyNFA(int* indexState, nfa_t* nfa){
  * states in the complemented RE. */
 void opComplement(int* indexState, nfa_t* a)
 {
+    ccLogTrace();
     bool appendedAck = false;
     ccListNode_t* ackTransition = NULL;
     transition_t* transition = NULL;
@@ -121,6 +124,7 @@ void opComplement(int* indexState, nfa_t* a)
 
 void opConcatenation(int* indexState, nfa_t* a, nfa_t* b)
 {
+    ccLogTrace();
     transition_t* transition_a = NULL;
     transition_t* transition_b = NULL;
 
@@ -144,6 +148,8 @@ void opConcatenation(int* indexState, nfa_t* a, nfa_t* b)
         transition_a->toState, transition_b->fromState, 0, 1, '?'), free));
     a->accept = b->accept;
 
+        nfa_shallowDtor(b);
+
 #ifdef TRACEDEBUG
     ccLogTrace();
     ccLogDebug("Result");
@@ -153,6 +159,7 @@ void opConcatenation(int* indexState, nfa_t* a, nfa_t* b)
 
 void opAlternation(int* indexState, nfa_t* a, nfa_t* b)
 {
+    ccLogTrace();
     transition_t* transition = NULL;
     ccListNode_t* node = NULL;
 
@@ -184,6 +191,8 @@ void opAlternation(int* indexState, nfa_t* a, nfa_t* b)
     a->accept = node;
     *indexState += 1;
 
+    nfa_shallowDtor(b);
+
 #ifdef TRACEDEBUG
     ccLogTrace();
     ccLogDebug("Result");
@@ -193,6 +202,7 @@ void opAlternation(int* indexState, nfa_t* a, nfa_t* b)
 
 void opKleene(int* indexState, nfa_t* a)
 {
+    ccLogTrace();
     transition_t* ack = NULL;
     transition_t* start = NULL;
     ccListNode_t* node = NULL;
@@ -223,6 +233,7 @@ void opKleene(int* indexState, nfa_t* a)
 
 void opPositiveClosure(int* indexState, nfa_t* a)
 {
+    ccLogTrace();
     transition_t* ack = NULL;
     transition_t* start = NULL;
     ccListNode_t* node = NULL;
@@ -252,6 +263,7 @@ void opPositiveClosure(int* indexState, nfa_t* a)
 
 void opExplicitClosure(int* indexState, nfa_t* a, size_t times)
 {
+    ccLogTrace();
     nfa_t* aux = a;
 
 #ifdef TRACEDEBUG
@@ -265,6 +277,7 @@ void opExplicitClosure(int* indexState, nfa_t* a, size_t times)
     if(times <= 1)
         return;
 
+    // TODO: fix mem
     for(size_t i = 1; i < times; ++i){
         aux = copyNFA(indexState, aux);
         opConcatenation(indexState, a, aux);
@@ -293,7 +306,8 @@ nfa_t* buildNFA_Epsilon(int* indexState)
 
 nfa_t* buildNFA_Character(int* indexState, char expression)
 {
-    nfa_t* nfa_result =  nfa_ctor();
+    ccLogTrace();
+    nfa_t* nfa_result = nfa_ctor();
     ccListNode_t* node;
     
     node = ccListNode_ctor(transition_ctor(*indexState, *indexState + 1, 0, 0, expression), free);
@@ -307,6 +321,7 @@ nfa_t* buildNFA_Character(int* indexState, char expression)
 
 nfa_t* buildNFA_CaptureGroup(int* indexState, expressionCaptureGroup_t* expression)
 {
+    ccLogTrace();
     nfa_t* nfa_result = NULL;
     nfa_t* nfa_aux = NULL;
 
@@ -321,6 +336,7 @@ nfa_t* buildNFA_CaptureGroup(int* indexState, expressionCaptureGroup_t* expressi
 
 nfa_t* buildNFA_Term(int* indexState, expressionTerm_t* expression)
 {
+    ccLogTrace();
     nfa_t* nfa_result = NULL;
 
     switch(expression->type){
@@ -346,6 +362,7 @@ nfa_t* buildNFA_Term(int* indexState, expressionTerm_t* expression)
 
 nfa_t* buildNFA_Complement(int* indexState, expressionComplement_t* expression)
 {
+    ccLogTrace();
     nfa_t* nfa_result = NULL;
     nfa_t* nfa_term = NULL;
 
@@ -368,6 +385,7 @@ nfa_t* buildNFA_Complement(int* indexState, expressionComplement_t* expression)
 
 nfa_t* buildNFA_Closure(int* indexState, expressionClosure_t* expression)
 {
+    ccLogTrace();
     nfa_t* nfa_result = NULL;
     nfa_t* nfa_complement = NULL;
 
@@ -395,6 +413,7 @@ nfa_t* buildNFA_Closure(int* indexState, expressionClosure_t* expression)
 
 nfa_t* buildNFA_Concatenation(int* indexState, expressionConcatenation_t* expression)
 {
+    ccLogTrace();
     nfa_t* nfa_result = NULL;
     nfa_t* nfa_concatenation = NULL;
     nfa_t* nfa_closure = NULL;
@@ -424,6 +443,7 @@ nfa_t* buildNFA_Concatenation(int* indexState, expressionConcatenation_t* expres
 
 nfa_t* buildNFA_Alternation(int* indexState, expressionAlternation_t* expression)
 {
+    ccLogTrace();
     nfa_t* nfa_result = NULL;
     nfa_t* nfa_concatenation = NULL;
     nfa_t* nfa_alternation = NULL;
@@ -452,6 +472,7 @@ nfa_t* buildNFA_Alternation(int* indexState, expressionAlternation_t* expression
 
 nfa_t* buildNFA_RegularExpression(int* indexState, expressionRegularExpression_t* expression)
 {
+    ccLogTrace();
     nfa_t* nfa = NULL;
 
     switch(expression->type){
@@ -509,7 +530,13 @@ nfa_t* nfa_ctor(void)
 
 void nfa_dtor(nfa_t* data)
 {
-    ccLogNotImplemented;
+    ccList_dtor(data->states);
+    free(data);
+}
+
+void nfa_shallowDtor(nfa_t* data){
+    free(data->states);
+    free(data);
 }
 
 void dbg_printTransition(transition_t* transition)

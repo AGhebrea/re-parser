@@ -501,6 +501,7 @@ void parse(char* filename)
                 dbg_printRE(regularExpression);
                 nfa = buildNFA(regularExpression);
                 dbg_printNFA(nfa);
+                nfa_dtor(nfa);
             }
             dtor_expressionRegularExpression(regularExpression);
         }
