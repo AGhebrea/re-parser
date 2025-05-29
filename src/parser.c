@@ -353,8 +353,6 @@ expressionAlternation_t* parseAlternationPrime()
     case tokenMajor_CloseParen:
     case tokenMajor_ExpressionSeparator:
     case tokenMajor_EOF:
-        expression = ctor_expressionAlternation();
-        expression->type = typeAlternation_Empty;
         break;
     default:
         printError("Unknown Expression Type");
@@ -388,12 +386,8 @@ expressionAlternation_t* parseAlternation()
             goto fail;
         }
         expression->alternation = parseAlternationPrime();
-        if(expression->alternation == NULL){
-            printError("Expected Alternation");
-            goto fail;
-        }
-        // if(expression->alternation->type == typeAlternation_Empty)
-        //     expression->type = typeAlternation_Concatenation;
+        if(expression->alternation == NULL)
+            expression->type = typeAlternation_Concatenation;
         break;
     default:
         printError("Unknown Expression Type");
@@ -491,6 +485,7 @@ fail:
 void parse(char* filename)
 {
     expressionRegularExpression_t* regularExpression;
+    nfa_t* nfa;
 
     ctor_lexer(filename);
 
@@ -504,8 +499,9 @@ void parse(char* filename)
         }else{
             if(regularExpression->type != typeRegularExpression_Empty){
                 dbg_printRE(regularExpression);
+                nfa = buildNFA(regularExpression);
+                dbg_printNFA(nfa);
             }
-            buildNFA(regularExpression);
             dtor_expressionRegularExpression(regularExpression);
         }
     }
