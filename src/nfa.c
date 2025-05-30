@@ -116,7 +116,10 @@ void opComplement(int* indexState, nfa_t* a)
     }
 
     *indexState += 1;
-    ccList_unlink(a->states, a->accept);
+    ccList_delete(a->states, a->accept);
+    if(a->accept == a->start){
+        a->start = ackTransition;
+    }
     ccListNode_dtor(a->accept);
     a->accept = ackTransition;
 }
@@ -148,7 +151,7 @@ void opConcatenation(int* indexState, nfa_t* a, nfa_t* b)
         transition_a->toState, transition_b->fromState, 0, 1, '?'), free));
     a->accept = b->accept;
 
-        nfa_shallowDtor(b);
+    nfa_shallowDtor(b);
 
 #ifdef TRACEDEBUG
     ccLogTrace();
