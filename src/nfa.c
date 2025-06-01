@@ -10,29 +10,12 @@
 
 // #define TRACEDEBUG
 
-/* NOTE: idk how to formally define the id generation mechanism. It's auto incrementing
- * and the criterion is that index always is greater than all states ever created */
-
-/* TODO: fix memory leaks */
-
-/* NOTE: If adding identic states becomes an issue we can add a rb-tree to nfa_t to store
- * info about transitions already present in the sets. */
 /* TODO: interleave the NFA build code with the parsing code. */
 /* NOTE: A general thing that i keep thinking about is if there are any ways to represent 
  * more complex data structures in a flatter manner and not have to dereference more than 
  * 1-2 times to get to values. Also, isn't there a simpler way to shuffle data around like 
  * this ? */
 
-/* hopefully lessons learned */
-/* TODO: if you think about it, we only mostly care about START and ACC of each set, 
- * we could try to use a single set and return some sort of control data structure to be able to
- * only use a single set. What did we learn ? to keep it simpler, i wasted a lot of time on pondering 
- * how to do this and it could've been figured out faster by asking ourselves "What do we really want to do ?"
- * as always. */
-/* NOTE: we could've done a bit better on AST building, now that I look at it a bit, there are 
- * inconsistencies. */
-
-/* NOTE: These should always store result into argument 'a' */
 void opComplement(stateType_t* indexState, nfa_t* a);
 void opConcatenation(stateType_t* indexState, nfa_t* a, nfa_t* b);
 void opAlternation(stateType_t* indexState, nfa_t* a, nfa_t* b);
@@ -56,31 +39,6 @@ void dbg_printNFA(nfa_t* nfa);\
 void dbg_printNFAStates(nfa_t* nfa);
 
 void fixupStates(nfa_t* nfa);
-
-/* Will be a really expensive operation sadly. We need to think if it is 
- * even worth it to try and keep them inorder while creating NFAs or if it's 
- * better to sort them after we are done.
- * We might be able to do a trick with incrementing the states of each item in a list.
- * but this means that we must be sure that no two lists that will be joined will have 
- * references to eachother. Might be worth to try. 
- * I mean, we are doing the same exact assumption when we copy the NFA so it's fine. 
- * We can just shift the states and it will be fine, but the issue now becomes that we 
- * might use too much memory if we don't use monotonic indexes. We will then have to build the 
- * state table at the very end and fixup the state indexes 
- * 
- * Wild stuff, maybe it works but we should be skeptical of things like these. 
- * We should do a napkin check to see. 
- * If we were to sort it at the end it would take N*log(N) to sort + N to build the state table.
- * If we do what we do we will do N fixups on average and N to build the state table ? 
- * it does seem better but we are not being precise with how much we do the fixups. we need to see 
- * There's also the fact that if we clobber memory yet again we can sort a ll in N time 
- * 
- * OK SO WE WILL JUST SORT IT AT THE END IN O(N) time since it's a linked list and we already
- * need an array containing states, we can use that array and the fact that it's a ll to sort it in O(N).
- * We'll try this since it seems simpler.
- * I think the algo goes something like this, iterate once over ll, for each node, we unlink it, we lookup the value in states[node->fromState], if
- * null, then we just place node there, otherwise, we link node at states[node->fromState] with the node already there.
- * after this, we parse the states[node->fromstates] and link all nodes. I think it's O(N) and we sorted the list */
 
 nfa_t* copyNFA(stateType_t* indexState, nfa_t* nfa){
     ccListNode_t* node = NULL;
@@ -133,8 +91,6 @@ void opComplement(stateType_t* indexState, nfa_t* a)
         transition = (transition_t*)ccList_itemAt(a->transitions, i);
         if(transition->isEpsilon != 0)
             continue;
-        /* TODO: see if you can do something about the fact that it takes a lot of boilerplate to add a transition to the list 
-         * we could make specialized functions, e.g append_epsilon, append_symbol, etc. or we can just leave it like this */
         ccList_append(a->transitions, ccListNode_ctor(transition_ctor( 
             transition->fromState, (*indexState), 1, 0, transition->symbol), free));
         if(appendedAck == false){
@@ -306,11 +262,9 @@ void opExplicitClosure(stateType_t* indexState, nfa_t* a, size_t times)
     dbg_printNFA(a);
 #endif // TRACEDEBUG
 
-
     if(times <= 1)
         return;
 
-    // TODO: fix mem
     for(size_t i = 1; i < times; ++i){
         aux = copyNFA(indexState, aux);
         opConcatenation(indexState, a, aux);
@@ -604,8 +558,6 @@ void fixupStates(nfa_t* nfa)
     transition_t* transition = NULL;
     size_t transitions = nfa->transitions->size;
 
-    // TODO: we lose a lot of states for some reason
-
     /* we populate the state array with linked lists, effectively sorting the transitions by fromState */
     nfa->states = ccDynamicArray_ctor(sizeof(ccListNode_t*), true);
     for(size_t i = 0; i < transitions; ++i){
@@ -615,14 +567,10 @@ void fixupStates(nfa_t* nfa)
         representative = *(ccListNode_t**)ccDynamicArray_get(nfa->states, transition->fromState);
         if(representative == NULL){
             ccDynamicArray_set(nfa->states, transition->fromState, &node);
-            // dbg_printTransition((transition_t*)transition);
-            // dbg_printTransition((transition_t*)(*(ccListNode_t**)ccDynamicArray_get(nfa->states, transition->fromState))->data);
         }else{
             representative->previous = node;
             node->next = representative;
             ccDynamicArray_set(nfa->states, transition->fromState, &node);
-            // dbg_printTransition((transition_t*)transition);
-            // dbg_printTransition((transition_t*)(*(ccListNode_t**)ccDynamicArray_get(nfa->states, transition->fromState))->data);
         }
     }
 
