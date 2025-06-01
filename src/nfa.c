@@ -1,7 +1,9 @@
+#include "ccDynamicArray.h"
 #include "ccList.h"
 #include "cclog_macros.h"
 #include "parserTypes.h"
 #include <nfa.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <cclog.h>
@@ -31,36 +33,64 @@
  * inconsistencies. */
 
 /* NOTE: These should always store result into argument 'a' */
-void opComplement(int* indexState, nfa_t* a);
-void opConcatenation(int* indexState, nfa_t* a, nfa_t* b);
-void opAlternation(int* indexState, nfa_t* a, nfa_t* b);
-void opKleene(int* indexState, nfa_t* a);
-void opPositiveClosure(int* indexState, nfa_t* a);
-void opExplicitClosure(int* indexState, nfa_t* a, size_t times);
+void opComplement(stateType_t* indexState, nfa_t* a);
+void opConcatenation(stateType_t* indexState, nfa_t* a, nfa_t* b);
+void opAlternation(stateType_t* indexState, nfa_t* a, nfa_t* b);
+void opKleene(stateType_t* indexState, nfa_t* a);
+void opPositiveClosure(stateType_t* indexState, nfa_t* a);
+void opExplicitClosure(stateType_t* indexState, nfa_t* a, size_t times);
 
-nfa_t* buildNFA_Epsilon(int* indexState);
-nfa_t* buildNFA_Character(int* indexState, char expression);
-nfa_t* buildNFA_CaptureGroup(int* indexState, expressionCaptureGroup_t* expression);
-nfa_t* buildNFA_Term(int* indexState, expressionTerm_t* expression);
-nfa_t* buildNFA_Complement(int* indexState, expressionComplement_t* expression);
-nfa_t* buildNFA_Closure(int* indexState, expressionClosure_t* expression);
-nfa_t* buildNFA_Concatenation(int* indexState, expressionConcatenation_t* expression);
-nfa_t* buildNFA_Alternation(int* indexState, expressionAlternation_t* expression);
-nfa_t* buildNFA_RegularExpression(int* indexState, expressionRegularExpression_t* expression);
+nfa_t* buildNFA_Epsilon(stateType_t* indexState);
+nfa_t* buildNFA_Character(stateType_t* indexState, char expression);
+nfa_t* buildNFA_CaptureGroup(stateType_t* indexState, expressionCaptureGroup_t* expression);
+nfa_t* buildNFA_Term(stateType_t* indexState, expressionTerm_t* expression);
+nfa_t* buildNFA_Complement(stateType_t* indexState, expressionComplement_t* expression);
+nfa_t* buildNFA_Closure(stateType_t* indexState, expressionClosure_t* expression);
+nfa_t* buildNFA_Concatenation(stateType_t* indexState, expressionConcatenation_t* expression);
+nfa_t* buildNFA_Alternation(stateType_t* indexState, expressionAlternation_t* expression);
+nfa_t* buildNFA_RegularExpression(stateType_t* indexState, expressionRegularExpression_t* expression);
 
 void nfa_shallowDtor(nfa_t* data);
 
-void dbg_printNFA(nfa_t* nfa);
+void dbg_printNFA(nfa_t* nfa);\
+void dbg_printNFAStates(nfa_t* nfa);
 
-nfa_t* copyNFA(int* indexState, nfa_t* nfa){
+void fixupStates(nfa_t* nfa);
+
+/* Will be a really expensive operation sadly. We need to think if it is 
+ * even worth it to try and keep them inorder while creating NFAs or if it's 
+ * better to sort them after we are done.
+ * We might be able to do a trick with incrementing the states of each item in a list.
+ * but this means that we must be sure that no two lists that will be joined will have 
+ * references to eachother. Might be worth to try. 
+ * I mean, we are doing the same exact assumption when we copy the NFA so it's fine. 
+ * We can just shift the states and it will be fine, but the issue now becomes that we 
+ * might use too much memory if we don't use monotonic indexes. We will then have to build the 
+ * state table at the very end and fixup the state indexes 
+ * 
+ * Wild stuff, maybe it works but we should be skeptical of things like these. 
+ * We should do a napkin check to see. 
+ * If we were to sort it at the end it would take N*log(N) to sort + N to build the state table.
+ * If we do what we do we will do N fixups on average and N to build the state table ? 
+ * it does seem better but we are not being precise with how much we do the fixups. we need to see 
+ * There's also the fact that if we clobber memory yet again we can sort a ll in N time 
+ * 
+ * OK SO WE WILL JUST SORT IT AT THE END IN O(N) time since it's a linked list and we already
+ * need an array containing states, we can use that array and the fact that it's a ll to sort it in O(N).
+ * We'll try this since it seems simpler.
+ * I think the algo goes something like this, iterate once over ll, for each node, we unlink it, we lookup the value in states[node->fromState], if
+ * null, then we just place node there, otherwise, we link node at states[node->fromState] with the node already there.
+ * after this, we parse the states[node->fromstates] and link all nodes. I think it's O(N) and we sorted the list */
+
+nfa_t* copyNFA(stateType_t* indexState, nfa_t* nfa){
     ccListNode_t* node = NULL;
     transition_t* transition = NULL;
     transition_t* start = nfa->start->data;
     transition_t* accept = nfa->accept->data;
     nfa_t* newNFA = nfa_ctor();
     ccList_t* newList = ccList_ctor();
-    ccList_t* list = nfa->states;
-    int index = *indexState;
+    ccList_t* list = nfa->transitions;
+    stateType_t index = *indexState;
 
     for(size_t i = 0; i < list->size; ++i){
         transition = (transition_t*)ccList_itemAt(list, i);
@@ -86,37 +116,37 @@ nfa_t* copyNFA(int* indexState, nfa_t* nfa){
  * create an epsilon transition to a new acknowledgment (ACK) state. Essentially, this process 
  * marks all states from the original RE, except its original ACK state, as valid acknowledgment 
  * states in the complemented RE. */
-void opComplement(int* indexState, nfa_t* a)
+void opComplement(stateType_t* indexState, nfa_t* a)
 {
     ccLogTrace();
     bool appendedAck = false;
     ccListNode_t* ackTransition = NULL;
     transition_t* transition = NULL;
-    size_t size = a->states->size;
-    short ackIndex = *indexState;
+    size_t size = a->transitions->size;
+    stateType_t ackIndex = *indexState;
     *indexState += 1;
 
     /* TODO: what if there are only epsilon transitions ? do we allow that ? 
      * sort that out */
     /* TODO: when we unlink, we might drop an entire graph, we should look into the effects of that */
     for(size_t i = 0; i < size; ++i){
-        transition = (transition_t*)ccList_itemAt(a->states, i);
+        transition = (transition_t*)ccList_itemAt(a->transitions, i);
         if(transition->isEpsilon != 0)
             continue;
         /* TODO: see if you can do something about the fact that it takes a lot of boilerplate to add a transition to the list 
          * we could make specialized functions, e.g append_epsilon, append_symbol, etc. or we can just leave it like this */
-        ccList_append(a->states, ccListNode_ctor(transition_ctor( 
+        ccList_append(a->transitions, ccListNode_ctor(transition_ctor( 
             transition->fromState, (*indexState), 1, 0, transition->symbol), free));
         if(appendedAck == false){
             ackTransition = ccListNode_ctor(transition_ctor( (*indexState), 
                 ackIndex, 0, 1, '?'), free);
-            ccList_append(a->states, ackTransition);
+            ccList_append(a->transitions, ackTransition);
             appendedAck = true;
         }
     }
 
     *indexState += 1;
-    ccList_delete(a->states, a->accept);
+    ccList_unlink(a->transitions, a->accept);
     if(a->accept == a->start){
         a->start = ackTransition;
     }
@@ -125,7 +155,7 @@ void opComplement(int* indexState, nfa_t* a)
 }
 
 
-void opConcatenation(int* indexState, nfa_t* a, nfa_t* b)
+void opConcatenation(stateType_t* indexState, nfa_t* a, nfa_t* b)
 {
     ccLogTrace();
     transition_t* transition_a = NULL;
@@ -142,12 +172,12 @@ void opConcatenation(int* indexState, nfa_t* a, nfa_t* b)
     dbg_printNFA(b);
 #endif // TRACEDEBUG
 
-    ccList_join(a->states, b->states);
+    ccList_join(a->transitions, b->transitions);
 
     transition_a = (transition_t*)a->accept->data;
     transition_b = (transition_t*)b->start->data;
 
-    ccList_append(a->states, ccListNode_ctor(transition_ctor( 
+    ccList_append(a->transitions, ccListNode_ctor(transition_ctor( 
         transition_a->toState, transition_b->fromState, 0, 1, '?'), free));
     a->accept = b->accept;
 
@@ -160,7 +190,7 @@ void opConcatenation(int* indexState, nfa_t* a, nfa_t* b)
 #endif // TRACEDEBUG
 }
 
-void opAlternation(int* indexState, nfa_t* a, nfa_t* b)
+void opAlternation(stateType_t* indexState, nfa_t* a, nfa_t* b)
 {
     ccLogTrace();
     transition_t* transition = NULL;
@@ -175,22 +205,22 @@ void opAlternation(int* indexState, nfa_t* a, nfa_t* b)
     dbg_printNFA(b);
 #endif // TRACEDEBUG
 
-    ccList_join(a->states, b->states);
+    ccList_join(a->transitions, b->transitions);
     transition = (transition_t*)a->start->data;
     node = ccListNode_ctor(transition_ctor( *indexState, transition->fromState, 0, 1, '?'), free);
-    ccList_append(a->states, node);
+    ccList_append(a->transitions, node);
     transition = (transition_t*)b->start->data;
     node = ccListNode_ctor(transition_ctor( *indexState, transition->fromState, 0, 1, '?'), free);
-    ccList_append(a->states, node);
+    ccList_append(a->transitions, node);
     a->start = node;
     *indexState += 1;
 
     transition = (transition_t*)a->accept->data;
     node = ccListNode_ctor(transition_ctor( transition->toState, *indexState, 0, 1, '?'), free);
-    ccList_append(a->states, node);
+    ccList_append(a->transitions, node);
     transition = (transition_t*)b->accept->data;
     node = ccListNode_ctor(transition_ctor( transition->toState, *indexState, 0, 1, '?'), free);
-    ccList_append(a->states, node);
+    ccList_append(a->transitions, node);
     a->accept = node;
     *indexState += 1;
 
@@ -203,7 +233,7 @@ void opAlternation(int* indexState, nfa_t* a, nfa_t* b)
 #endif // TRACEDEBUG
 }
 
-void opKleene(int* indexState, nfa_t* a)
+void opKleene(stateType_t* indexState, nfa_t* a)
 {
     ccLogTrace();
     transition_t* ack = NULL;
@@ -220,10 +250,10 @@ void opKleene(int* indexState, nfa_t* a)
     ack = (transition_t*)a->accept->data;
     start = (transition_t*)a->start->data;
     node = ccListNode_ctor(transition_ctor(ack->toState, *indexState, 0, 1, '?'), free);
-    ccList_append(a->states, node);
+    ccList_append(a->transitions, node);
     a->accept = node;
-    ccList_append(a->states, ccListNode_ctor(transition_ctor(start->fromState, *indexState, 0, 1, '?'), free));
-    ccList_append(a->states, ccListNode_ctor(transition_ctor(ack->toState, start->fromState, 0, 1, '?'), free));
+    ccList_append(a->transitions, ccListNode_ctor(transition_ctor(start->fromState, *indexState, 0, 1, '?'), free));
+    ccList_append(a->transitions, ccListNode_ctor(transition_ctor(ack->toState, start->fromState, 0, 1, '?'), free));
 
     *indexState += 1;
 
@@ -234,7 +264,7 @@ void opKleene(int* indexState, nfa_t* a)
 #endif // TRACEDEBUG
 }
 
-void opPositiveClosure(int* indexState, nfa_t* a)
+void opPositiveClosure(stateType_t* indexState, nfa_t* a)
 {
     ccLogTrace();
     transition_t* ack = NULL;
@@ -251,9 +281,9 @@ void opPositiveClosure(int* indexState, nfa_t* a)
     ack = (transition_t*)a->accept->data;
     start = (transition_t*)a->start->data;
     node = ccListNode_ctor(transition_ctor(ack->toState, *indexState, 0, 1, '?'), free);
-    ccList_append(a->states, node);
+    ccList_append(a->transitions, node);
     a->accept = node;
-    ccList_append(a->states, ccListNode_ctor(transition_ctor(ack->toState, start->fromState, 0, 1, '?'), free));
+    ccList_append(a->transitions, ccListNode_ctor(transition_ctor(ack->toState, start->fromState, 0, 1, '?'), free));
 
     *indexState += 1;
 
@@ -264,7 +294,7 @@ void opPositiveClosure(int* indexState, nfa_t* a)
 #endif // TRACEDEBUG
 }
 
-void opExplicitClosure(int* indexState, nfa_t* a, size_t times)
+void opExplicitClosure(stateType_t* indexState, nfa_t* a, size_t times)
 {
     ccLogTrace();
     nfa_t* aux = a;
@@ -293,13 +323,13 @@ void opExplicitClosure(int* indexState, nfa_t* a, size_t times)
 #endif // TRACEDEBUG
 }
 
-nfa_t* buildNFA_Epsilon(int* indexState)
+nfa_t* buildNFA_Epsilon(stateType_t* indexState)
 {
     nfa_t* nfa_result = nfa_ctor();
     ccListNode_t* node;
     
     node = ccListNode_ctor(transition_ctor(*indexState, *indexState + 1, 0, 1, '?'), free);
-    ccList_append(nfa_result->states, node);
+    ccList_append(nfa_result->transitions, node);
     nfa_result->start = node;
     nfa_result->accept = node;
     *indexState += 2;
@@ -307,14 +337,14 @@ nfa_t* buildNFA_Epsilon(int* indexState)
     return nfa_result;
 }
 
-nfa_t* buildNFA_Character(int* indexState, char expression)
+nfa_t* buildNFA_Character(stateType_t* indexState, char expression)
 {
     ccLogTrace();
     nfa_t* nfa_result = nfa_ctor();
     ccListNode_t* node;
     
     node = ccListNode_ctor(transition_ctor(*indexState, *indexState + 1, 0, 0, expression), free);
-    ccList_append(nfa_result->states, node);
+    ccList_append(nfa_result->transitions, node);
     nfa_result->start = node;
     nfa_result->accept = node;
     *indexState += 2;
@@ -322,7 +352,7 @@ nfa_t* buildNFA_Character(int* indexState, char expression)
     return nfa_result;
 }
 
-nfa_t* buildNFA_CaptureGroup(int* indexState, expressionCaptureGroup_t* expression)
+nfa_t* buildNFA_CaptureGroup(stateType_t* indexState, expressionCaptureGroup_t* expression)
 {
     ccLogTrace();
     nfa_t* nfa_result = NULL;
@@ -337,7 +367,7 @@ nfa_t* buildNFA_CaptureGroup(int* indexState, expressionCaptureGroup_t* expressi
     return nfa_result;
 }
 
-nfa_t* buildNFA_Term(int* indexState, expressionTerm_t* expression)
+nfa_t* buildNFA_Term(stateType_t* indexState, expressionTerm_t* expression)
 {
     ccLogTrace();
     nfa_t* nfa_result = NULL;
@@ -363,7 +393,7 @@ nfa_t* buildNFA_Term(int* indexState, expressionTerm_t* expression)
     return nfa_result;
 }
 
-nfa_t* buildNFA_Complement(int* indexState, expressionComplement_t* expression)
+nfa_t* buildNFA_Complement(stateType_t* indexState, expressionComplement_t* expression)
 {
     ccLogTrace();
     nfa_t* nfa_result = NULL;
@@ -386,7 +416,7 @@ nfa_t* buildNFA_Complement(int* indexState, expressionComplement_t* expression)
     return nfa_result;
 }
 
-nfa_t* buildNFA_Closure(int* indexState, expressionClosure_t* expression)
+nfa_t* buildNFA_Closure(stateType_t* indexState, expressionClosure_t* expression)
 {
     ccLogTrace();
     nfa_t* nfa_result = NULL;
@@ -414,7 +444,7 @@ nfa_t* buildNFA_Closure(int* indexState, expressionClosure_t* expression)
     return nfa_result;
 }
 
-nfa_t* buildNFA_Concatenation(int* indexState, expressionConcatenation_t* expression)
+nfa_t* buildNFA_Concatenation(stateType_t* indexState, expressionConcatenation_t* expression)
 {
     ccLogTrace();
     nfa_t* nfa_result = NULL;
@@ -444,7 +474,7 @@ nfa_t* buildNFA_Concatenation(int* indexState, expressionConcatenation_t* expres
     return nfa_result;
 }
 
-nfa_t* buildNFA_Alternation(int* indexState, expressionAlternation_t* expression)
+nfa_t* buildNFA_Alternation(stateType_t* indexState, expressionAlternation_t* expression)
 {
     ccLogTrace();
     nfa_t* nfa_result = NULL;
@@ -473,7 +503,7 @@ nfa_t* buildNFA_Alternation(int* indexState, expressionAlternation_t* expression
     return nfa_result;
 }
 
-nfa_t* buildNFA_RegularExpression(int* indexState, expressionRegularExpression_t* expression)
+nfa_t* buildNFA_RegularExpression(stateType_t* indexState, expressionRegularExpression_t* expression)
 {
     ccLogTrace();
     nfa_t* nfa = NULL;
@@ -498,15 +528,20 @@ nfa_t* buildNFA_RegularExpression(int* indexState, expressionRegularExpression_t
  * than to delay a refactoring of the code */
 nfa_t* buildNFA(expressionRegularExpression_t* expression)
 {
-    int indexState = 0;
+    stateType_t indexState = 0;
     nfa_t* nfa = NULL;
 
     nfa = buildNFA_RegularExpression(&indexState, expression);
+    if(ccLog_isLogLevelActive(ccLogLevels_Debug))
+        dbg_printNFA(nfa);
+    fixupStates(nfa);
+    if(ccLog_isLogLevelActive(ccLogLevels_Debug))
+        dbg_printNFAStates(nfa);
 
     return nfa;
 }
 
-transition_t* transition_ctor(int fromState, int toState, char isComplement, char isEpsilon, char symbol)
+transition_t* transition_ctor(stateType_t fromState, stateType_t toState, char isComplement, char isEpsilon, char symbol)
 {
     transition_t* transition = malloc(sizeof(transition_t));
 
@@ -526,27 +561,29 @@ nfa_t* nfa_ctor(void)
     expectExit(nfa, malloc(sizeof(nfa_t)), != NULL);
     nfa->start = NULL;
     nfa->accept = NULL;
-    nfa->states = ccList_ctor();
+    nfa->transitions = ccList_ctor();
+    nfa->states = NULL;
 
     return nfa;
 }
 
 void nfa_dtor(nfa_t* data)
 {
-    ccList_dtor(data->states);
+    ccList_dtor(data->transitions);
+    ccDynamicArray_dtor(data->states);
     free(data);
 }
 
 void nfa_shallowDtor(nfa_t* data){
-    free(data->states);
+    free(data->transitions);
     free(data);
 }
 
 void dbg_printTransition(transition_t* transition)
 {
     ccLogDebug(
-        "\nfromState: \t%d\n"
-        "toState: \t%d\n"
+        "\nfromState: \t%ld\n"
+        "toState: \t%ld\n"
         "isCompl: \t%s\n"
         "isEpsil: \t%s\n"
         "symbol: \t%c (0x%x)\n",
@@ -559,6 +596,39 @@ void dbg_printTransition(transition_t* transition)
     );
 }
 
+/* This functions sorts ll nodes by fromState and populates the states data structure */
+void fixupStates(nfa_t* nfa)
+{
+    ccListNode_t* node = NULL;
+    ccListNode_t* representative = NULL;
+    transition_t* transition = NULL;
+    size_t transitions = nfa->transitions->size;
+
+    // TODO: we lose a lot of states for some reason
+
+    /* we populate the state array with linked lists, effectively sorting the transitions by fromState */
+    nfa->states = ccDynamicArray_ctor(sizeof(ccListNode_t*), true);
+    for(size_t i = 0; i < transitions; ++i){
+        node = nfa->transitions->head;
+        ccList_unlink(nfa->transitions, node);
+        transition = (transition_t*)node->data;
+        representative = *(ccListNode_t**)ccDynamicArray_get(nfa->states, transition->fromState);
+        if(representative == NULL){
+            ccDynamicArray_set(nfa->states, transition->fromState, &node);
+            // dbg_printTransition((transition_t*)transition);
+            // dbg_printTransition((transition_t*)(*(ccListNode_t**)ccDynamicArray_get(nfa->states, transition->fromState))->data);
+        }else{
+            representative->previous = node;
+            node->next = representative;
+            ccDynamicArray_set(nfa->states, transition->fromState, &node);
+            // dbg_printTransition((transition_t*)transition);
+            // dbg_printTransition((transition_t*)(*(ccListNode_t**)ccDynamicArray_get(nfa->states, transition->fromState))->data);
+        }
+    }
+
+    /* TODO: do we even need to relink the whole list ? */
+}
+
 void dbg_printNFA(nfa_t* nfa)
 {
     ccLogDebug("\n\n\n\nSTART PRINT NFA");
@@ -566,8 +636,37 @@ void dbg_printNFA(nfa_t* nfa)
     dbg_printTransition((transition_t*)nfa->start->data);
     ccLogDebug("accept:");
     dbg_printTransition((transition_t*)nfa->accept->data);
-    for(size_t i = 0; i < nfa->states->size; ++i){
-        dbg_printTransition((transition_t*)ccList_itemAt(nfa->states, i));
+    for(size_t i = 0; i < nfa->transitions->size; ++i){
+        dbg_printTransition((transition_t*)ccList_itemAt(nfa->transitions, i));
     }
     ccLogDebug("END PRINT NFA\n\n\n\n");
+}
+
+void dbg_printNFAStates(nfa_t* nfa)
+{
+    int doPrint = 0;
+    ccListNode_t* node = NULL;
+
+    ccLogDebug("start:");
+    dbg_printTransition((transition_t*)nfa->start->data);
+    ccLogDebug("accept:");
+    dbg_printTransition((transition_t*)nfa->accept->data);
+
+    if(nfa->states == NULL)
+        return;
+
+    for(size_t i = 0; i < nfa->states->size; ++i){
+        node = *(ccListNode_t**)ccDynamicArray_get(nfa->states, i);
+        doPrint = 0;
+        if(node != NULL)
+            doPrint = 1;
+        if(doPrint == 1)
+            ccLogDebug("LINKAGE START");
+        while(node != NULL){
+            dbg_printTransition((transition_t*)node->data);
+            node = node->next;
+        }
+        if(doPrint == 1)
+            ccLogDebug("LINKAGE END\n");
+    }
 }

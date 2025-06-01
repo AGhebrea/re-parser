@@ -500,7 +500,6 @@ void parse(char* filename)
             if(regularExpression->type != typeRegularExpression_Empty){
                 dbg_printRE(regularExpression);
                 nfa = buildNFA(regularExpression);
-                dbg_printNFA(nfa);
                 nfa_dtor(nfa);
             }
             dtor_expressionRegularExpression(regularExpression);
