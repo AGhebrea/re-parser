@@ -52,7 +52,7 @@ nfa_t* copyNFA(stateType_t* indexState, nfa_t* nfa){
 
     for(size_t i = 0; i < list->size; ++i){
         transition = (nfa_transition_t*)ccList_itemAt(list, i);
-        node = ccListNode_ctor(transition_ctor(
+        node = ccListNode_ctor(nfa_transition_ctor(
             index + transition->fromState, index + transition->toState, transition->isComplement, 
             transition->isEpsilon, transition->symbol), free);
         ccList_append(newList, node);
@@ -91,10 +91,10 @@ void opComplement(stateType_t* indexState, nfa_t* a)
         transition = (nfa_transition_t*)ccList_itemAt(a->transitions, i);
         if(transition->isEpsilon != 0)
             continue;
-        ccList_append(a->transitions, ccListNode_ctor(transition_ctor( 
+        ccList_append(a->transitions, ccListNode_ctor(nfa_transition_ctor( 
             transition->fromState, (*indexState), 1, 0, transition->symbol), free));
         if(appendedAck == false){
-            ackTransition = ccListNode_ctor(transition_ctor( (*indexState), 
+            ackTransition = ccListNode_ctor(nfa_transition_ctor( (*indexState), 
                 ackIndex, 0, 1, '?'), free);
             ccList_append(a->transitions, ackTransition);
             appendedAck = true;
@@ -133,7 +133,7 @@ void opConcatenation(stateType_t* indexState, nfa_t* a, nfa_t* b)
     transition_a = (nfa_transition_t*)a->accept->data;
     transition_b = (nfa_transition_t*)b->start->data;
 
-    ccList_append(a->transitions, ccListNode_ctor(transition_ctor( 
+    ccList_append(a->transitions, ccListNode_ctor(nfa_transition_ctor( 
         transition_a->toState, transition_b->fromState, 0, 1, '?'), free));
     a->accept = b->accept;
 
@@ -163,19 +163,19 @@ void opAlternation(stateType_t* indexState, nfa_t* a, nfa_t* b)
 
     ccList_join(a->transitions, b->transitions);
     transition = (nfa_transition_t*)a->start->data;
-    node = ccListNode_ctor(transition_ctor( *indexState, transition->fromState, 0, 1, '?'), free);
+    node = ccListNode_ctor(nfa_transition_ctor( *indexState, transition->fromState, 0, 1, '?'), free);
     ccList_append(a->transitions, node);
     transition = (nfa_transition_t*)b->start->data;
-    node = ccListNode_ctor(transition_ctor( *indexState, transition->fromState, 0, 1, '?'), free);
+    node = ccListNode_ctor(nfa_transition_ctor( *indexState, transition->fromState, 0, 1, '?'), free);
     ccList_append(a->transitions, node);
     a->start = node;
     *indexState += 1;
 
     transition = (nfa_transition_t*)a->accept->data;
-    node = ccListNode_ctor(transition_ctor( transition->toState, *indexState, 0, 1, '?'), free);
+    node = ccListNode_ctor(nfa_transition_ctor( transition->toState, *indexState, 0, 1, '?'), free);
     ccList_append(a->transitions, node);
     transition = (nfa_transition_t*)b->accept->data;
-    node = ccListNode_ctor(transition_ctor( transition->toState, *indexState, 0, 1, '?'), free);
+    node = ccListNode_ctor(nfa_transition_ctor( transition->toState, *indexState, 0, 1, '?'), free);
     ccList_append(a->transitions, node);
     a->accept = node;
     *indexState += 1;
@@ -205,11 +205,11 @@ void opKleene(stateType_t* indexState, nfa_t* a)
 
     ack = (nfa_transition_t*)a->accept->data;
     start = (nfa_transition_t*)a->start->data;
-    node = ccListNode_ctor(transition_ctor(ack->toState, *indexState, 0, 1, '?'), free);
+    node = ccListNode_ctor(nfa_transition_ctor(ack->toState, *indexState, 0, 1, '?'), free);
     ccList_append(a->transitions, node);
     a->accept = node;
-    ccList_append(a->transitions, ccListNode_ctor(transition_ctor(start->fromState, *indexState, 0, 1, '?'), free));
-    ccList_append(a->transitions, ccListNode_ctor(transition_ctor(ack->toState, start->fromState, 0, 1, '?'), free));
+    ccList_append(a->transitions, ccListNode_ctor(nfa_transition_ctor(start->fromState, *indexState, 0, 1, '?'), free));
+    ccList_append(a->transitions, ccListNode_ctor(nfa_transition_ctor(ack->toState, start->fromState, 0, 1, '?'), free));
 
     *indexState += 1;
 
@@ -236,10 +236,10 @@ void opPositiveClosure(stateType_t* indexState, nfa_t* a)
 
     ack = (nfa_transition_t*)a->accept->data;
     start = (nfa_transition_t*)a->start->data;
-    node = ccListNode_ctor(transition_ctor(ack->toState, *indexState, 0, 1, '?'), free);
+    node = ccListNode_ctor(nfa_transition_ctor(ack->toState, *indexState, 0, 1, '?'), free);
     ccList_append(a->transitions, node);
     a->accept = node;
-    ccList_append(a->transitions, ccListNode_ctor(transition_ctor(ack->toState, start->fromState, 0, 1, '?'), free));
+    ccList_append(a->transitions, ccListNode_ctor(nfa_transition_ctor(ack->toState, start->fromState, 0, 1, '?'), free));
 
     *indexState += 1;
 
@@ -282,7 +282,7 @@ nfa_t* buildNFA_Epsilon(stateType_t* indexState)
     nfa_t* nfa_result = nfa_ctor();
     ccListNode_t* node;
     
-    node = ccListNode_ctor(transition_ctor(*indexState, *indexState + 1, 0, 1, '?'), free);
+    node = ccListNode_ctor(nfa_transition_ctor(*indexState, *indexState + 1, 0, 1, '?'), free);
     ccList_append(nfa_result->transitions, node);
     nfa_result->start = node;
     nfa_result->accept = node;
@@ -297,7 +297,7 @@ nfa_t* buildNFA_Character(stateType_t* indexState, char expression)
     nfa_t* nfa_result = nfa_ctor();
     ccListNode_t* node;
     
-    node = ccListNode_ctor(transition_ctor(*indexState, *indexState + 1, 0, 0, expression), free);
+    node = ccListNode_ctor(nfa_transition_ctor(*indexState, *indexState + 1, 0, 0, expression), free);
     ccList_append(nfa_result->transitions, node);
     nfa_result->start = node;
     nfa_result->accept = node;
@@ -495,7 +495,7 @@ nfa_t* buildNFA(expressionRegularExpression_t* expression)
     return nfa;
 }
 
-nfa_transition_t* transition_ctor(stateType_t fromState, stateType_t toState, char isComplement, char isEpsilon, char symbol)
+nfa_transition_t* nfa_transition_ctor(stateType_t fromState, stateType_t toState, char isComplement, char isEpsilon, char symbol)
 {
     nfa_transition_t* transition = malloc(sizeof(nfa_transition_t));
 

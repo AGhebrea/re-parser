@@ -21,7 +21,7 @@ typedef struct nfa{
     ccDynamicArray_t* states;
 }nfa_t;
 
-nfa_transition_t* transition_ctor(stateType_t fromState, stateType_t toState, char isComplement, char isEpsilon, char symbol);
+nfa_transition_t* nfa_transition_ctor(stateType_t fromState, stateType_t toState, char isComplement, char isEpsilon, char symbol);
 void transition_dtor(nfa_transition_t* data);
 nfa_t* nfa_ctor(void);
 void nfa_dtor(nfa_t* data);

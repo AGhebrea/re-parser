@@ -85,7 +85,7 @@ int compareSetsImpl(ccRBTreeNode_t* a, ccRBTreeNode_t* b, int(*compare_fn)(void*
         return -1;
 
     if(!hasDescendants(a) && !hasDescendants(b))
-        return compare_fn(a->item, b->item);
+        return (stateType_t)(a->item) - (stateType_t)(b->item);
 
     status = compareSetsImpl(a->left, b->left, compare_fn);
     if(status == 0)
