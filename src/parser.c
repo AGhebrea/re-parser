@@ -7,6 +7,7 @@
 #include <lexer.h>
 #include <threads.h>
 #include <nfa.h>
+#include <dfa.h>
 
 #define DO_NOTHING (void)0
 
@@ -486,6 +487,7 @@ void parse(char* filename)
 {
     expressionRegularExpression_t* regularExpression;
     nfa_t* nfa;
+    dfa_t* dfa;
 
     ctor_lexer(filename);
 
@@ -500,7 +502,10 @@ void parse(char* filename)
             if(regularExpression->type != typeRegularExpression_Empty){
                 dbg_printRE(regularExpression);
                 nfa = buildNFA(regularExpression);
+                dfa = buildDFA(nfa);
                 nfa_dtor(nfa);
+                dfa_dtor(dfa);
+
             }
             dtor_expressionRegularExpression(regularExpression);
         }

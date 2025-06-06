@@ -24,7 +24,7 @@ run: ${BUILD_OUTPUT}
 	${BUILD_OUTPUT}
 
 debug: ${BUILD_OUTPUT}
-	gf2 ${BUILD_OUTPUT}
+	gdb ${BUILD_OUTPUT}
 
 .PHONY: test
 test: ${TEST_MAIN_FILE} ${TEST_FILES} ${BUILD_FILES}
