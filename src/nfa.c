@@ -523,7 +523,18 @@ nfa_t* nfa_ctor(void)
 
 void nfa_dtor(nfa_t* data)
 {
+    ccListNode_t* node;
+    ccListNode_t* aux;
+
     ccList_dtor(data->transitions);
+    for(size_t i = 0; i < data->states->size; ++i){
+        node = *(ccListNode_t**)ccDynamicArray_get(data->states, i);
+        while(node != NULL){
+            aux = node;
+            node = node->next;
+            ccListNode_dtor(aux);
+        }
+    }
     ccDynamicArray_dtor(data->states);
     free(data);
 }

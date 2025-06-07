@@ -3,6 +3,7 @@
 #include "ccDynamicArray.h"
 #include "ccList.h"
 #include "cclog.h"
+#include "ccstd.h"
 #include <ccRBTree.h>
 #include <ccStack.h>
 #include <cclog_macros.h>
@@ -130,7 +131,7 @@ dfa_t* buildDFA(nfa_t* nfa)
     stateType_t stateId = 0;
     ccStack_t* workStack = ccStack_ctor(256, NULL);
     ccStack_t* walkStack = ccStack_ctor(256, NULL);
-    ccRBTree_t* stateSet = ccRBTree_ctor(0, free, compareSets);
+    ccRBTree_t* stateSet = ccRBTree_ctor(0, compareSets);
     dfa_state_t* fromState = NULL;
     dfa_state_t* toState = NULL;
     dfa_state_t* auxState = NULL;
@@ -146,10 +147,12 @@ dfa_t* buildDFA(nfa_t* nfa)
     dfa_t* dfa = dfa_ctor();
 
     fromSet = followEpsilon(nfa, &((nfa_transition_t*)nfa->start->data)->fromState, &hasAcceptState);
+    ccList_append(dfa->setList, ccListNode_ctor(fromSet, (dtor_t)ccRBTree_dtor));
     fromState = dfa_state_ctor(stateId, fromSet);
     dfa->start = fromState->state;
+    dfa->startState = fromState;
     stateId += 1;
-    ccRBTree_insert(stateSet, ccRBTreeNode_ctor(fromState, NULL));
+    ccRBTree_insert(stateSet, ccRBTreeNode_ctor(fromState, NULL, NULL, NULL));
     ccStack_push(workStack, fromState);
     while(workStack->size != 0){
         fromState = ccStack_pop(workStack);
@@ -168,12 +171,14 @@ dfa_t* buildDFA(nfa_t* nfa)
                 nfa_transition = (nfa_transition_t*)node->data;
                 if(!nfa_transition->isEpsilon){
                     toSet = followEpsilon(nfa, &nfa_transition->toState, &hasAcceptState);
+                    ccList_append(dfa->setList, ccListNode_ctor(toSet, (dtor_t)ccRBTree_dtor));
                     auxState = dfa_state_ctor(stateId, toSet);
                     auxSetNode = ccRBTree_find(stateSet, auxState);
+                    free(auxState);
                     if(auxSetNode == NULL){
                         toState = dfa_state_ctor(stateId, toSet);
                         stateId += 1;
-                        ccRBTree_insert(stateSet, ccRBTreeNode_ctor(toState, NULL));
+                        ccRBTree_insert(stateSet, ccRBTreeNode_ctor(toState, NULL, NULL, NULL));
                         ccStack_push(workStack, toState);
                     }else{
                         toState = (dfa_state_t*)(auxSetNode->item);
@@ -185,7 +190,7 @@ dfa_t* buildDFA(nfa_t* nfa)
                         list = ccList_ctor();
                         ccDynamicArray_set(dfa->states, dfa_transition->fromState->state, &list);
                     }
-                    ccList_append(list, ccListNode_ctor(dfa_transition, dfa_transition_dtor));
+                    ccList_append(list, ccListNode_ctor(dfa_transition, (dtor_t)dfa_transition_dtor));
 
                     // insert transition into ccRBTree_t* auxTransitionsOnChar;
                     auxSetNode = ccRBTree_find(dfa->auxTransitionsOnChar, &dfa_transition->symbol);
@@ -193,15 +198,15 @@ dfa_t* buildDFA(nfa_t* nfa)
                         list = (ccList_t*)(auxSetNode->item);
                     }else{
                         list = ccList_ctor();
-                        ccRBTree_insert(dfa->auxTransitionsOnChar, ccRBTreeNode_ctor(list, &dfa_transition->symbol)); 
+                        ccRBTree_insert(dfa->auxTransitionsOnChar, ccRBTreeNode_ctor(list, &dfa_transition->symbol, (dtor_t)ccList_dtor, NULL)); 
                     }
-                    ccList_append(list, ccListNode_ctor(dfa_transition, dfa_transition_dtor));
+                    ccList_append(list, ccListNode_ctor(dfa_transition, NULL));
 
                     // if transition contains acceptState of nfa, add it to ccList_t* acceptStates;
                     if(hasAcceptState){
                         auxSetNode = ccRBTree_find(dfa->acceptStates, &dfa_transition->toState->state);
                         if(auxSetNode == NULL)
-                            ccRBTree_insert(dfa->acceptStates, ccRBTreeNode_ctor(&dfa_transition->toState->state, NULL));
+                            ccRBTree_insert(dfa->acceptStates, ccRBTreeNode_ctor(&dfa_transition->toState->state, NULL, free, NULL));
                     }
                 }
             }
@@ -214,8 +219,9 @@ dfa_t* buildDFA(nfa_t* nfa)
 
     ccStack_dtor(workStack);
     ccStack_dtor(walkStack);
+    ccRBTree_dtor(stateSet);
 
-    return NULL;
+    return dfa;
 }
 
 dfa_t* dfa_ctor()
@@ -224,16 +230,32 @@ dfa_t* dfa_ctor()
     expectExit(dfa, malloc(sizeof(dfa_t)), != NULL);
 
     dfa->start = 0;
-    dfa->acceptStates = ccRBTree_ctor(0, free, compareStates);
+    dfa->acceptStates = ccRBTree_ctor(0, compareStates);
     dfa->states = ccDynamicArray_ctor(sizeof(ccList_t*), true);
-    dfa->auxTransitionsOnChar = ccRBTree_ctor(1, dfa_transition_dtor, compareByChar);
+    dfa->auxTransitionsOnChar = ccRBTree_ctor(1, compareByChar);
+    dfa->setList = ccList_ctor();
+
+    // todo: create set list and free the sets once, you have the issue that you doble free
 
     return dfa;
 }
 
 void dfa_dtor(dfa_t* dfa)
 {
-    ccLogNotImplemented;
+    ccList_t* list;
+
+    ccRBTree_dtor(dfa->acceptStates);
+    ccRBTree_dtor(dfa->auxTransitionsOnChar);
+    for(size_t i = 0; i < dfa->states->size; ++i){
+        list = *(ccList_t**)ccDynamicArray_get(dfa->states, i);
+        if(list == NULL)
+            continue;
+        ccList_dtor(list);
+    }
+    ccDynamicArray_dtor(dfa->states);
+    ccList_dtor(dfa->setList);
+    free(dfa->startState);
+    free(dfa);
 }
 
 /* TODO: could be just return (int)(a-b); */
@@ -275,9 +297,9 @@ ccRBTree_t* followEpsilon(nfa_t* nfa, stateType_t* stateIndex, bool* hasAcceptSt
     ccListNode_t* state = NULL;
     ccListNode_t* nextState = NULL;
     ccStack_t* stack = ccStack_ctor(256, NULL);
-    ccRBTree_t* set = ccRBTree_ctor(0, free, compareStates);
+    ccRBTree_t* set = ccRBTree_ctor(0, compareStates);
     
-    ccRBTree_insert(set, ccRBTreeNode_ctor(stateIndex, NULL));
+    ccRBTree_insert(set, ccRBTreeNode_ctor(stateIndex, NULL, NULL, NULL));
     state = *(ccListNode_t**)ccDynamicArray_get(nfa->states, *stateIndex);
     ccStack_push(stack, state);
     while(stack->size != 0){
@@ -288,7 +310,7 @@ ccRBTree_t* followEpsilon(nfa_t* nfa, stateType_t* stateIndex, bool* hasAcceptSt
                 if(nextState != NULL){
                     ccStack_push(stack, nextState);
                 }
-                ccRBTree_insert(set, ccRBTreeNode_ctor(&((nfa_transition_t*)state->data)->toState, NULL));
+                ccRBTree_insert(set, ccRBTreeNode_ctor(&((nfa_transition_t*)state->data)->toState, NULL, NULL, NULL));
                 if(((nfa_transition_t*)state->data)->toState == ((nfa_transition_t*)(nfa->accept->data))->toState)
                     *hasAcceptState = true;
             }
@@ -311,9 +333,10 @@ dfa_state_t* dfa_state_ctor(stateType_t state, ccRBTree_t* set)
     return newState;
 }
 
-void dfa_state_dtor(void* data)
+void dfa_state_dtor(dfa_state_t* data)
 {
-    free(data);
+    // we free the sets in another function.
+    // free(data);
 }
 
 dfa_transition_t* dfa_transition_ctor(dfa_state_t* fromState, dfa_state_t* toState, char isComplement, char isEpsilon, char symbol)
@@ -330,7 +353,9 @@ dfa_transition_t* dfa_transition_ctor(dfa_state_t* fromState, dfa_state_t* toSta
     return transition;
 }
 
-void dfa_transition_dtor(void* data)
+void dfa_transition_dtor(dfa_transition_t* data)
 {
-    ccLogNotImplemented;
+    dfa_state_dtor(data->fromState);
+    dfa_state_dtor(data->toState);
+    free(data);
 }

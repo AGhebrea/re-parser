@@ -1,612 +1,138 @@
-==66904== Memcheck, a memory error detector
-==66904== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==66904== Using Valgrind-3.25.1-4441567fbe-20250520 and LibVEX; rerun with -h for copyright info
-==66904== Command: ./bin/executable
-==66904== Parent PID: 1150
-==66904== 
---66904-- 
---66904-- Valgrind options:
---66904--    --leak-check=full
---66904--    --show-leak-kinds=all
---66904--    --track-origins=yes
---66904--    --verbose
---66904--    --log-file=./debug/memcheck/valgrind-out.txt
---66904-- Contents of /proc/version:
---66904--   Linux version 6.14.7-arch2-1 (linux@archlinux) (gcc (GCC) 15.1.1 20250425, GNU ld (GNU Binutils) 2.44.0) #1 SMP PREEMPT_DYNAMIC Thu, 22 May 2025 05:37:49 +0000
---66904-- 
---66904-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand-rdseed-fma
---66904-- Page sizes: currently 4096, max supported 4096
---66904-- Valgrind library directory: /usr/lib/valgrind
---66904-- Reading syms from /home/alex/software/projects/compilerTheory/compiler/research/lexers/re-parser/bin/executable
---66904-- Reading syms from /usr/lib/ld-linux-x86-64.so.2
-==66904== Downloading debug info for /usr/lib/ld-linux-x86-64.so.2...
---66904--   Considering /home/alex/.cache/debuginfod_client/880803fb40ebf69518d6a56628ce2be9c5f5c89b/debuginfo ..
---66904--   .. CRC is valid
-==66904== Successfully downloaded debug file for /usr/lib/ld-linux-x86-64.so.2
---66904-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
---66904--    object doesn't have a dynamic symbol table
---66904-- Scheduler: using generic scheduler lock implementation.
---66904-- Reading suppressions file: /usr/lib/valgrind/default.supp
-==66904== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-66904-by-alex-on-???
-==66904== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-66904-by-alex-on-???
-==66904== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-66904-by-alex-on-???
-==66904== 
-==66904== TO CONTROL THIS PROCESS USING vgdb (which you probably
-==66904== don't want to do, unless you know exactly what you're doing,
-==66904== or are doing some strange experiment):
-==66904==   /usr/lib/valgrind/../../bin/vgdb --pid=66904 ...command...
-==66904== 
-==66904== TO DEBUG THIS PROCESS USING GDB: start GDB like this
-==66904==   /path/to/gdb ./bin/executable
-==66904== and then give GDB the following command
-==66904==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=66904
-==66904== --pid is optional if only one valgrind process is running
-==66904== 
-==66904== Downloading debug info for /usr/lib/valgrind/memcheck-amd64-linux...
---66904--   Considering /home/alex/.cache/debuginfod_client/d3be6428a75911b4e88b7f513aaf1d171beabc21/debuginfo ..
---66904--   .. CRC is valid
-==66904== Successfully downloaded debug file for /usr/lib/valgrind/memcheck-amd64-linux
---66904-- Warning: cross-CU LIMITATION: some inlined fn names
---66904-- might be shown as UnknownInlinedFun
---66904-- REDIR: 0x4037520 (ld-linux-x86-64.so.2:strlen) redirected to 0x5823f6d2 (vgPlain_amd64_linux_REDIR_FOR_strlen)
---66904-- REDIR: 0x4035ee0 (ld-linux-x86-64.so.2:strcmp) redirected to 0x5823f6ec (vgPlain_amd64_linux_REDIR_FOR_strcmp)
---66904-- REDIR: 0x4035cb0 (ld-linux-x86-64.so.2:index) redirected to 0x5823f725 (vgPlain_amd64_linux_REDIR_FOR_index)
---66904-- REDIR: 0x4035040 (ld-linux-x86-64.so.2:bcmp) redirected to 0x5823f707 (vgPlain_amd64_linux_REDIR_FOR_memcmp)
---66904-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
---66904-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
-==66904== WARNING: new redirection conflicts with existing -- ignoring it
---66904--     old: 0x04035ee0 (strcmp              ) R-> (0000.0) 0x5823f6ec vgPlain_amd64_linux_REDIR_FOR_strcmp
-==66904== Downloading debug info for /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so...
---66904--   Considering /home/alex/.cache/debuginfod_client/403753d6c7387bebdec4dfaaa93f7790525577d9/debuginfo ..
---66904--   .. CRC is valid
-==66904== Successfully downloaded debug file for /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
---66904--     new: 0x04035ee0 (strcmp              ) R-> (2016.0) 0x048602f0 strcmp
-==66904== WARNING: new redirection conflicts with existing -- ignoring it
---66904--     old: 0x04037520 (strlen              ) R-> (0000.0) 0x5823f6d2 vgPlain_amd64_linux_REDIR_FOR_strlen
---66904--     new: 0x04037520 (strlen              ) R-> (2007.0) 0x0485ee80 strlen
---66904-- REDIR: 0x4035310 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4864a80 (mempcpy)
---66904-- Reading syms from /usr/lib/libc.so.6
-==66904== Downloading debug info for /usr/lib/libc.so.6...
---66904--   Considering /home/alex/.cache/debuginfod_client/468e3585c794491a48ea75fceb9e4d6b1464fc35/debuginfo ..
---66904--   .. CRC is valid
-==66904== Successfully downloaded debug file for /usr/lib/libc.so.6
---66904-- REDIR: 0x40376c0 (ld-linux-x86-64.so.2:strncmp) redirected to 0x485fa50 (strncmp)
-==66904== Downloading debug info for /usr/lib/valgrind/vgpreload_core-amd64-linux.so...
---66904--   Considering /home/alex/.cache/debuginfod_client/0c51105d9993ab51719a1f2cded9603486a0d0b6/debuginfo ..
---66904--   .. CRC is valid
-==66904== Successfully downloaded debug file for /usr/lib/valgrind/vgpreload_core-amd64-linux.so
---66904-- REDIR: 0x4948140 (libc.so.6:strncasecmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49453d0 (libc.so.6:mempcpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x495b890 (libc.so.6:wcpncpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4945740 (libc.so.6:stpcpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49bf320 (libc.so.6:__memmove_chk) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4969e20 (libc.so.6:wmemcmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4946390 (libc.so.6:strcat) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4944a00 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x495d740 (libc.so.6:wcsncpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49bf210 (libc.so.6:__memcpy_chk) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
-==66904== WARNING: new redirection conflicts with existing -- ignoring it
---66904--     old: 0x04a05f50 (__memcpy_chk_avx_una) R-> (2024.0) 0x04864460 __memmove_chk
---66904--     new: 0x04a05f50 (__memcpy_chk_avx_una) R-> (2030.0) 0x04864b90 __memcpy_chk
---66904-- REDIR: 0x495ce80 (libc.so.6:wcslen) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4945560 (libc.so.6:memset) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x495d7b0 (libc.so.6:wcsnlen) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4948440 (libc.so.6:strnlen) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49484c0 (libc.so.6:strpbrk) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4946500 (libc.so.6:strcmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49454e0 (libc.so.6:memrchr) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x495bca0 (libc.so.6:wcschr) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4946400 (libc.so.6:index) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49484f0 (libc.so.6:rindex) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x495bd40 (libc.so.6:wcscmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49457b0 (libc.so.6:stpncpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4969da0 (libc.so.6:wmemchr) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49482e0 (libc.so.6:strncmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4945810 (libc.so.6:strcasecmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49475e0 (libc.so.6:strcspn) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x495cc60 (libc.so.6:wcscpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49481e0 (libc.so.6:strncasecmp_l) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4946480 (libc.so.6:strchrnul) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4944910 (libc.so.6:bcmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4947570 (libc.so.6:strcpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49458b0 (libc.so.6:strcasecmp_l) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49480c0 (libc.so.6:strlen) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4948380 (libc.so.6:strncpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49452c0 (libc.so.6:memmove) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
-==66904== Preferring higher priority redirection:
---66904--     old: 0x04a05f80 (__memcpy_avx_unalign) R-> (2018.0) 0x048619a0 __memcpy_avx_unaligned_erms
---66904--     new: 0x04a05f80 (__memcpy_avx_unalign) R-> (2018.1) 0x04863730 memmove
---66904-- REDIR: 0x4944890 (libc.so.6:memchr) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x49486f0 (libc.so.6:strspn) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
---66904-- REDIR: 0x4a0abb0 (libc.so.6:__strrchr_avx2) redirected to 0x485e5e0 (rindex)
---66904-- REDIR: 0x4940610 (libc.so.6:malloc) redirected to 0x4855730 (malloc)
---66904-- REDIR: 0x4a08120 (libc.so.6:__strchr_avx2) redirected to 0x485e860 (index)
---66904-- REDIR: 0x4a05f40 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x4864640 (mempcpy)
---66904-- REDIR: 0x4940d60 (libc.so.6:free) redirected to 0x4858880 (free)
---66904-- REDIR: 0x4a08d00 (libc.so.6:__strlen_avx2) redirected to 0x485ed60 (strlen)
---66904-- REDIR: 0x4a06980 (libc.so.6:__memset_avx2_unaligned_erms) redirected to 0x4863600 (memset)
---66904-- REDIR: 0x4a08360 (libc.so.6:__strchrnul_avx2) redirected to 0x4864510 (strchrnul)
---66904-- REDIR: 0x4a05f80 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x4863730 (memmove)
---66904-- REDIR: 0x4941900 (libc.so.6:calloc) redirected to 0x485cb60 (calloc)
-==66904== 
-==66904== HEAP SUMMARY:
-==66904==     in use at exit: 8,696 bytes in 127 blocks
-==66904==   total heap usage: 206 allocs, 79 frees, 44,157 bytes allocated
-==66904== 
-==66904== Searching for pointers to 127 not-freed blocks
-==66904== Checked 89,680 bytes
-==66904== 
-==66904== 16 bytes in 1 blocks are indirectly lost in loss record 1 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4003073: dfa_state_ctor (dfa.c:307)
-==66904==    by 0x4002897: buildDFA (dfa.c:149)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 24 bytes in 1 blocks are indirectly lost in loss record 2 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4004F98: nfa_transition_ctor (nfa.c:500)
-==66904==    by 0x4004847: buildNFA_Character (nfa.c:300)
-==66904==    by 0x4004A26: buildNFA_Term (nfa.c:337)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004DD7: buildNFA_Alternation (nfa.c:440)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x40049EA: buildNFA_Term (nfa.c:331)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904== 
-==66904== 24 bytes in 1 blocks are indirectly lost in loss record 3 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4004F98: nfa_transition_ctor (nfa.c:500)
-==66904==    by 0x4004847: buildNFA_Character (nfa.c:300)
-==66904==    by 0x4004A26: buildNFA_Term (nfa.c:337)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004DF2: buildNFA_Alternation (nfa.c:441)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x40049EA: buildNFA_Term (nfa.c:331)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904== 
-==66904== 24 bytes in 1 blocks are indirectly lost in loss record 4 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4004F98: nfa_transition_ctor (nfa.c:500)
-==66904==    by 0x400425E: opAlternation (nfa.c:166)
-==66904==    by 0x4004E0D: buildNFA_Alternation (nfa.c:444)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x40049EA: buildNFA_Term (nfa.c:331)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904== 
-==66904== 24 bytes in 1 blocks are indirectly lost in loss record 5 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4004F98: nfa_transition_ctor (nfa.c:500)
-==66904==    by 0x40042BF: opAlternation (nfa.c:169)
-==66904==    by 0x4004E0D: buildNFA_Alternation (nfa.c:444)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x40049EA: buildNFA_Term (nfa.c:331)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904== 
-==66904== 24 bytes in 1 blocks are indirectly lost in loss record 6 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4004F98: nfa_transition_ctor (nfa.c:500)
-==66904==    by 0x400433F: opAlternation (nfa.c:175)
-==66904==    by 0x4004E0D: buildNFA_Alternation (nfa.c:444)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x40049EA: buildNFA_Term (nfa.c:331)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904== 
-==66904== 24 bytes in 1 blocks are indirectly lost in loss record 7 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4004F98: nfa_transition_ctor (nfa.c:500)
-==66904==    by 0x40043A2: opAlternation (nfa.c:178)
-==66904==    by 0x4004E0D: buildNFA_Alternation (nfa.c:444)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x40049EA: buildNFA_Term (nfa.c:331)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904== 
-==66904== 24 bytes in 1 blocks are indirectly lost in loss record 8 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4004F98: nfa_transition_ctor (nfa.c:500)
-==66904==    by 0x400448F: opKleene (nfa.c:208)
-==66904==    by 0x4004BCC: buildNFA_Closure (nfa.c:382)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x4004F44: buildNFA (nfa.c:488)
-==66904==    by 0x40062EE: parse (parser.c:504)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 24 bytes in 1 blocks are indirectly lost in loss record 9 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4004F98: nfa_transition_ctor (nfa.c:500)
-==66904==    by 0x40044EE: opKleene (nfa.c:211)
-==66904==    by 0x4004BCC: buildNFA_Closure (nfa.c:382)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x4004F44: buildNFA (nfa.c:488)
-==66904==    by 0x40062EE: parse (parser.c:504)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 24 bytes in 1 blocks are indirectly lost in loss record 10 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4004F98: nfa_transition_ctor (nfa.c:500)
-==66904==    by 0x400453D: opKleene (nfa.c:212)
-==66904==    by 0x4004BCC: buildNFA_Closure (nfa.c:382)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x4004F44: buildNFA (nfa.c:488)
-==66904==    by 0x40062EE: parse (parser.c:504)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 24 bytes in 1 blocks are indirectly lost in loss record 11 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4004F98: nfa_transition_ctor (nfa.c:500)
-==66904==    by 0x4004847: buildNFA_Character (nfa.c:300)
-==66904==    by 0x4004A26: buildNFA_Term (nfa.c:337)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004CDB: buildNFA_Concatenation (nfa.c:411)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x4004F44: buildNFA (nfa.c:488)
-==66904==    by 0x40062EE: parse (parser.c:504)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 24 bytes in 1 blocks are indirectly lost in loss record 12 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4004F98: nfa_transition_ctor (nfa.c:500)
-==66904==    by 0x400417D: opConcatenation (nfa.c:136)
-==66904==    by 0x4004CF6: buildNFA_Concatenation (nfa.c:414)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x4004F44: buildNFA (nfa.c:488)
-==66904==    by 0x40062EE: parse (parser.c:504)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 32 bytes in 1 blocks are indirectly lost in loss record 13 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x40042D1: opAlternation (nfa.c:169)
-==66904==    by 0x4004E0D: buildNFA_Alternation (nfa.c:444)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x40049EA: buildNFA_Term (nfa.c:331)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904== 
-==66904== 32 bytes in 1 blocks are indirectly lost in loss record 14 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x4004500: opKleene (nfa.c:211)
-==66904==    by 0x4004BCC: buildNFA_Closure (nfa.c:382)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x4004F44: buildNFA (nfa.c:488)
-==66904==    by 0x40062EE: parse (parser.c:504)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 32 bytes in 1 blocks are indirectly lost in loss record 15 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x400454F: opKleene (nfa.c:212)
-==66904==    by 0x4004BCC: buildNFA_Closure (nfa.c:382)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x4004F44: buildNFA (nfa.c:488)
-==66904==    by 0x40062EE: parse (parser.c:504)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 32 bytes in 1 blocks are indirectly lost in loss record 16 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4008114: ccRBTree_ctor (ccRBTree.c:10)
-==66904==    by 0x4002D69: dfa_ctor (dfa.c:227)
-==66904==    by 0x4002853: buildDFA (dfa.c:146)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 32 bytes in 1 blocks are indirectly lost in loss record 17 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x40091D6: ccDynamicArray_ctor (ccDynamicArray.c:12)
-==66904==    by 0x4002D80: dfa_ctor (dfa.c:228)
-==66904==    by 0x4002853: buildDFA (dfa.c:146)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 32 bytes in 1 blocks are indirectly lost in loss record 18 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4008114: ccRBTree_ctor (ccRBTree.c:10)
-==66904==    by 0x4002DA3: dfa_ctor (dfa.c:229)
-==66904==    by 0x4002853: buildDFA (dfa.c:146)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 32 bytes in 1 blocks are indirectly lost in loss record 19 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4008114: ccRBTree_ctor (ccRBTree.c:10)
-==66904==    by 0x4002EFE: followEpsilon (dfa.c:278)
-==66904==    by 0x4002880: buildDFA (dfa.c:148)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 48 bytes in 1 blocks are indirectly lost in loss record 20 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x400819B: ccRBTreeNode_ctor (ccRBTree.c:26)
-==66904==    by 0x4002F13: followEpsilon (dfa.c:280)
-==66904==    by 0x4002880: buildDFA (dfa.c:148)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 48 bytes in 1 blocks are indirectly lost in loss record 21 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x400819B: ccRBTreeNode_ctor (ccRBTree.c:26)
-==66904==    by 0x40028BF: buildDFA (dfa.c:152)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 48 bytes in 3 blocks are indirectly lost in loss record 22 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4003073: dfa_state_ctor (dfa.c:307)
-==66904==    by 0x4002A32: buildDFA (dfa.c:174)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 56 (32 direct, 24 indirect) bytes in 1 blocks are definitely lost in loss record 23 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x4004859: buildNFA_Character (nfa.c:300)
-==66904==    by 0x4004A26: buildNFA_Term (nfa.c:337)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004DD7: buildNFA_Alternation (nfa.c:440)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x40049EA: buildNFA_Term (nfa.c:331)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904== 
-==66904== 56 (32 direct, 24 indirect) bytes in 1 blocks are definitely lost in loss record 24 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x4004859: buildNFA_Character (nfa.c:300)
-==66904==    by 0x4004A26: buildNFA_Term (nfa.c:337)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004DF2: buildNFA_Alternation (nfa.c:441)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x40049EA: buildNFA_Term (nfa.c:331)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904== 
-==66904== 56 (32 direct, 24 indirect) bytes in 1 blocks are definitely lost in loss record 25 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x4004351: opAlternation (nfa.c:175)
-==66904==    by 0x4004E0D: buildNFA_Alternation (nfa.c:444)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x40049EA: buildNFA_Term (nfa.c:331)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904== 
-==66904== 56 (32 direct, 24 indirect) bytes in 1 blocks are definitely lost in loss record 26 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x40043B4: opAlternation (nfa.c:178)
-==66904==    by 0x4004E0D: buildNFA_Alternation (nfa.c:444)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x40049EA: buildNFA_Term (nfa.c:331)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904== 
-==66904== 56 (32 direct, 24 indirect) bytes in 1 blocks are definitely lost in loss record 27 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x4004859: buildNFA_Character (nfa.c:300)
-==66904==    by 0x4004A26: buildNFA_Term (nfa.c:337)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004CDB: buildNFA_Concatenation (nfa.c:411)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x4004F44: buildNFA (nfa.c:488)
-==66904==    by 0x40062EE: parse (parser.c:504)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 56 (32 direct, 24 indirect) bytes in 1 blocks are definitely lost in loss record 28 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x400418F: opConcatenation (nfa.c:136)
-==66904==    by 0x4004CF6: buildNFA_Concatenation (nfa.c:414)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x4004F44: buildNFA (nfa.c:488)
-==66904==    by 0x40062EE: parse (parser.c:504)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 112 (32 direct, 80 indirect) bytes in 1 blocks are definitely lost in loss record 29 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x40044A1: opKleene (nfa.c:208)
-==66904==    by 0x4004BCC: buildNFA_Closure (nfa.c:382)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x4004F44: buildNFA (nfa.c:488)
-==66904==    by 0x40062EE: parse (parser.c:504)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 120 bytes in 3 blocks are indirectly lost in loss record 30 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007676: ccList_ctor (ccList.c:11)
-==66904==    by 0x4002B81: buildDFA (dfa.c:195)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 144 bytes in 3 blocks are indirectly lost in loss record 31 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x400819B: ccRBTreeNode_ctor (ccRBTree.c:26)
-==66904==    by 0x4002A4C: buildDFA (dfa.c:176)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 144 bytes in 3 blocks are indirectly lost in loss record 32 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x400819B: ccRBTreeNode_ctor (ccRBTree.c:26)
-==66904==    by 0x4002BA2: buildDFA (dfa.c:196)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 144 bytes in 3 blocks are indirectly lost in loss record 33 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x400819B: ccRBTreeNode_ctor (ccRBTree.c:26)
-==66904==    by 0x4002C2C: buildDFA (dfa.c:204)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 160 bytes in 4 blocks are indirectly lost in loss record 34 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007676: ccList_ctor (ccList.c:11)
-==66904==    by 0x4002AEF: buildDFA (dfa.c:185)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 168 bytes in 7 blocks are indirectly lost in loss record 35 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x400312B: dfa_transition_ctor (dfa.c:323)
-==66904==    by 0x4002AB3: buildDFA (dfa.c:181)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 168 (32 direct, 136 indirect) bytes in 1 blocks are definitely lost in loss record 36 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x4004270: opAlternation (nfa.c:166)
-==66904==    by 0x4004E0D: buildNFA_Alternation (nfa.c:444)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904==    by 0x40049EA: buildNFA_Term (nfa.c:331)
-==66904==    by 0x4004ACA: buildNFA_Complement (nfa.c:356)
-==66904==    by 0x4004B8B: buildNFA_Closure (nfa.c:379)
-==66904==    by 0x4004D17: buildNFA_Concatenation (nfa.c:418)
-==66904==    by 0x4004CC0: buildNFA_Concatenation (nfa.c:410)
-==66904==    by 0x4004E2E: buildNFA_Alternation (nfa.c:448)
-==66904==    by 0x4004ED0: buildNFA_RegularExpression (nfa.c:467)
-==66904== 
-==66904== 224 bytes in 7 blocks are indirectly lost in loss record 37 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4008114: ccRBTree_ctor (ccRBTree.c:10)
-==66904==    by 0x4002EFE: followEpsilon (dfa.c:278)
-==66904==    by 0x40029E6: buildDFA (dfa.c:170)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 224 bytes in 7 blocks are indirectly lost in loss record 38 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x4002B30: buildDFA (dfa.c:188)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 224 bytes in 7 blocks are indirectly lost in loss record 39 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4007764: ccListNode_ctor (ccList.c:38)
-==66904==    by 0x4002BCE: buildDFA (dfa.c:198)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 336 bytes in 7 blocks are indirectly lost in loss record 40 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x400819B: ccRBTreeNode_ctor (ccRBTree.c:26)
-==66904==    by 0x4002F13: followEpsilon (dfa.c:280)
-==66904==    by 0x40029E6: buildDFA (dfa.c:170)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 1,280 (32 direct, 1,248 indirect) bytes in 1 blocks are definitely lost in loss record 41 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4008114: ccRBTree_ctor (ccRBTree.c:10)
-==66904==    by 0x40027EF: buildDFA (dfa.c:133)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 1,392 (112 direct, 1,280 indirect) bytes in 7 blocks are definitely lost in loss record 42 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4003073: dfa_state_ctor (dfa.c:307)
-==66904==    by 0x40029FD: buildDFA (dfa.c:171)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 1,632 bytes in 34 blocks are indirectly lost in loss record 43 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x400819B: ccRBTreeNode_ctor (ccRBTree.c:26)
-==66904==    by 0x4002FE8: followEpsilon (dfa.c:291)
-==66904==    by 0x40029E6: buildDFA (dfa.c:170)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 4,096 bytes in 1 blocks are indirectly lost in loss record 44 of 45
-==66904==    at 0x485CC13: calloc (vg_replace_malloc.c:1675)
-==66904==    by 0x400926A: ccDynamicArray_ctor (ccDynamicArray.c:17)
-==66904==    by 0x4002D80: dfa_ctor (dfa.c:228)
-==66904==    by 0x4002853: buildDFA (dfa.c:146)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== 5,408 (32 direct, 5,376 indirect) bytes in 1 blocks are definitely lost in loss record 45 of 45
-==66904==    at 0x48557A8: malloc (vg_replace_malloc.c:446)
-==66904==    by 0x4002CE7: dfa_ctor (dfa.c:224)
-==66904==    by 0x4002853: buildDFA (dfa.c:146)
-==66904==    by 0x40062FE: parse (parser.c:505)
-==66904==    by 0x40022B5: main (main.c:7)
-==66904== 
-==66904== LEAK SUMMARY:
-==66904==    definitely lost: 432 bytes in 17 blocks
-==66904==    indirectly lost: 8,264 bytes in 110 blocks
-==66904==      possibly lost: 0 bytes in 0 blocks
-==66904==    still reachable: 0 bytes in 0 blocks
-==66904==         suppressed: 0 bytes in 0 blocks
-==66904== 
-==66904== ERROR SUMMARY: 11 errors from 11 contexts (suppressed: 0 from 0)
+==11263== Memcheck, a memory error detector
+==11263== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==11263== Using Valgrind-3.25.1-4441567fbe-20250520 and LibVEX; rerun with -h for copyright info
+==11263== Command: ./bin/executable
+==11263== Parent PID: 2263
+==11263== 
+--11263-- 
+--11263-- Valgrind options:
+--11263--    --leak-check=full
+--11263--    --show-leak-kinds=all
+--11263--    --track-origins=yes
+--11263--    --verbose
+--11263--    --log-file=./debug/memcheck/valgrind-out.txt
+--11263-- Contents of /proc/version:
+--11263--   Linux version 6.14.7-arch2-1 (linux@archlinux) (gcc (GCC) 15.1.1 20250425, GNU ld (GNU Binutils) 2.44.0) #1 SMP PREEMPT_DYNAMIC Thu, 22 May 2025 05:37:49 +0000
+--11263-- 
+--11263-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand-rdseed-fma
+--11263-- Page sizes: currently 4096, max supported 4096
+--11263-- Valgrind library directory: /usr/lib/valgrind
+--11263-- Reading syms from /home/alex/software/projects/compilerTheory/compiler/research/lexers/re-parser/bin/executable
+--11263-- Reading syms from /usr/lib/ld-linux-x86-64.so.2
+==11263== Downloading debug info for /usr/lib/ld-linux-x86-64.so.2...
+--11263--   Considering /home/alex/.cache/debuginfod_client/880803fb40ebf69518d6a56628ce2be9c5f5c89b/debuginfo ..
+--11263--   .. CRC is valid
+==11263== Successfully downloaded debug file for /usr/lib/ld-linux-x86-64.so.2
+--11263-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
+--11263--    object doesn't have a dynamic symbol table
+--11263-- Scheduler: using generic scheduler lock implementation.
+--11263-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==11263== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-11263-by-alex-on-???
+==11263== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-11263-by-alex-on-???
+==11263== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-11263-by-alex-on-???
+==11263== 
+==11263== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==11263== don't want to do, unless you know exactly what you're doing,
+==11263== or are doing some strange experiment):
+==11263==   /usr/lib/valgrind/../../bin/vgdb --pid=11263 ...command...
+==11263== 
+==11263== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==11263==   /path/to/gdb ./bin/executable
+==11263== and then give GDB the following command
+==11263==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=11263
+==11263== --pid is optional if only one valgrind process is running
+==11263== 
+==11263== Downloading debug info for /usr/lib/valgrind/memcheck-amd64-linux...
+--11263--   Considering /home/alex/.cache/debuginfod_client/d3be6428a75911b4e88b7f513aaf1d171beabc21/debuginfo ..
+--11263--   .. CRC is valid
+==11263== Successfully downloaded debug file for /usr/lib/valgrind/memcheck-amd64-linux
+--11263-- Warning: cross-CU LIMITATION: some inlined fn names
+--11263-- might be shown as UnknownInlinedFun
+--11263-- REDIR: 0x4037520 (ld-linux-x86-64.so.2:strlen) redirected to 0x5823f6d2 (vgPlain_amd64_linux_REDIR_FOR_strlen)
+--11263-- REDIR: 0x4035ee0 (ld-linux-x86-64.so.2:strcmp) redirected to 0x5823f6ec (vgPlain_amd64_linux_REDIR_FOR_strcmp)
+--11263-- REDIR: 0x4035cb0 (ld-linux-x86-64.so.2:index) redirected to 0x5823f725 (vgPlain_amd64_linux_REDIR_FOR_index)
+--11263-- REDIR: 0x4035040 (ld-linux-x86-64.so.2:bcmp) redirected to 0x5823f707 (vgPlain_amd64_linux_REDIR_FOR_memcmp)
+--11263-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+--11263-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+==11263== WARNING: new redirection conflicts with existing -- ignoring it
+--11263--     old: 0x04035ee0 (strcmp              ) R-> (0000.0) 0x5823f6ec vgPlain_amd64_linux_REDIR_FOR_strcmp
+==11263== Downloading debug info for /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so...
+--11263--   Considering /home/alex/.cache/debuginfod_client/403753d6c7387bebdec4dfaaa93f7790525577d9/debuginfo ..
+--11263--   .. CRC is valid
+==11263== Successfully downloaded debug file for /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+--11263--     new: 0x04035ee0 (strcmp              ) R-> (2016.0) 0x048602f0 strcmp
+==11263== WARNING: new redirection conflicts with existing -- ignoring it
+--11263--     old: 0x04037520 (strlen              ) R-> (0000.0) 0x5823f6d2 vgPlain_amd64_linux_REDIR_FOR_strlen
+--11263--     new: 0x04037520 (strlen              ) R-> (2007.0) 0x0485ee80 strlen
+--11263-- REDIR: 0x4035310 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4864a80 (mempcpy)
+--11263-- Reading syms from /usr/lib/libc.so.6
+==11263== Downloading debug info for /usr/lib/libc.so.6...
+--11263--   Considering /home/alex/.cache/debuginfod_client/468e3585c794491a48ea75fceb9e4d6b1464fc35/debuginfo ..
+--11263--   .. CRC is valid
+==11263== Successfully downloaded debug file for /usr/lib/libc.so.6
+--11263-- REDIR: 0x40376c0 (ld-linux-x86-64.so.2:strncmp) redirected to 0x485fa50 (strncmp)
+==11263== Downloading debug info for /usr/lib/valgrind/vgpreload_core-amd64-linux.so...
+--11263--   Considering /home/alex/.cache/debuginfod_client/0c51105d9993ab51719a1f2cded9603486a0d0b6/debuginfo ..
+--11263--   .. CRC is valid
+==11263== Successfully downloaded debug file for /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+--11263-- REDIR: 0x4948140 (libc.so.6:strncasecmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49453d0 (libc.so.6:mempcpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x495b890 (libc.so.6:wcpncpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4945740 (libc.so.6:stpcpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49bf320 (libc.so.6:__memmove_chk) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4969e20 (libc.so.6:wmemcmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4946390 (libc.so.6:strcat) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4944a00 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x495d740 (libc.so.6:wcsncpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49bf210 (libc.so.6:__memcpy_chk) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+==11263== WARNING: new redirection conflicts with existing -- ignoring it
+--11263--     old: 0x04a05f50 (__memcpy_chk_avx_una) R-> (2024.0) 0x04864460 __memmove_chk
+--11263--     new: 0x04a05f50 (__memcpy_chk_avx_una) R-> (2030.0) 0x04864b90 __memcpy_chk
+--11263-- REDIR: 0x495ce80 (libc.so.6:wcslen) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4945560 (libc.so.6:memset) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x495d7b0 (libc.so.6:wcsnlen) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4948440 (libc.so.6:strnlen) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49484c0 (libc.so.6:strpbrk) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4946500 (libc.so.6:strcmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49454e0 (libc.so.6:memrchr) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x495bca0 (libc.so.6:wcschr) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4946400 (libc.so.6:index) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49484f0 (libc.so.6:rindex) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x495bd40 (libc.so.6:wcscmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49457b0 (libc.so.6:stpncpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4969da0 (libc.so.6:wmemchr) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49482e0 (libc.so.6:strncmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4945810 (libc.so.6:strcasecmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49475e0 (libc.so.6:strcspn) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x495cc60 (libc.so.6:wcscpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49481e0 (libc.so.6:strncasecmp_l) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4946480 (libc.so.6:strchrnul) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4944910 (libc.so.6:bcmp) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4947570 (libc.so.6:strcpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49458b0 (libc.so.6:strcasecmp_l) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49480c0 (libc.so.6:strlen) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4948380 (libc.so.6:strncpy) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49452c0 (libc.so.6:memmove) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+==11263== Preferring higher priority redirection:
+--11263--     old: 0x04a05f80 (__memcpy_avx_unalign) R-> (2018.0) 0x048619a0 __memcpy_avx_unaligned_erms
+--11263--     new: 0x04a05f80 (__memcpy_avx_unalign) R-> (2018.1) 0x04863730 memmove
+--11263-- REDIR: 0x4944890 (libc.so.6:memchr) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x49486f0 (libc.so.6:strspn) redirected to 0x484a1a0 (_vgnU_ifunc_wrapper)
+--11263-- REDIR: 0x4a0abb0 (libc.so.6:__strrchr_avx2) redirected to 0x485e5e0 (rindex)
+--11263-- REDIR: 0x4940610 (libc.so.6:malloc) redirected to 0x4855730 (malloc)
+--11263-- REDIR: 0x4a08120 (libc.so.6:__strchr_avx2) redirected to 0x485e860 (index)
+--11263-- REDIR: 0x4a05f40 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x4864640 (mempcpy)
+--11263-- REDIR: 0x4940d60 (libc.so.6:free) redirected to 0x4858880 (free)
+--11263-- REDIR: 0x4a08d00 (libc.so.6:__strlen_avx2) redirected to 0x485ed60 (strlen)
+--11263-- REDIR: 0x4a06980 (libc.so.6:__memset_avx2_unaligned_erms) redirected to 0x4863600 (memset)
+--11263-- REDIR: 0x4a08360 (libc.so.6:__strchrnul_avx2) redirected to 0x4864510 (strchrnul)
+--11263-- REDIR: 0x4a05f80 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x4863730 (memmove)
+--11263-- REDIR: 0x4941900 (libc.so.6:calloc) redirected to 0x485cb60 (calloc)
+==11263== 
+==11263== HEAP SUMMARY:
+==11263==     in use at exit: 0 bytes in 0 blocks
+==11263==   total heap usage: 237 allocs, 237 frees, 90,621 bytes allocated
+==11263== 
+==11263== All heap blocks were freed -- no leaks are possible
+==11263== 
+==11263== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
