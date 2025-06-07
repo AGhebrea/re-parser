@@ -584,8 +584,6 @@ void fixupStates(nfa_t* nfa)
             ccDynamicArray_set(nfa->states, transition->fromState, &node);
         }
     }
-
-    /* TODO: do we even need to relink the whole list ? */
 }
 
 void dbg_printNFA(nfa_t* nfa)

@@ -11,120 +11,29 @@
 #include <string.h>
 
 ccRBTree_t* followEpsilon(nfa_t* nfa, stateType_t* stateIndex, bool* hasAcceptState);
-int compareStates(void* a, void* b);
-int compareByChar(void* a, void* b);
 
-static void dbg_printTransition(dfa_transition_t* transition)
-{
-    ccLogDebug(
-        "\n\tfromState: \t%ld\n"
-        "\ttoState: \t%ld\n"
-        "\tisCompl: \t%s\n"
-        "\tisEpsil: \t%s\n"
-        "\tsymbol: \t%c (0x%x)\n",
-        transition->fromState->state,
-        transition->toState->state,
-        (int)transition->isComplement ? "True" : "False",
-        (int)transition->isEpsilon ? "True" : "False",
-        transition->symbol,
-        transition->symbol
-    );
-}
+static inline int doFollow(ccRBTree_t* set, nfa_transition_t* transition);
+static inline int hasDescendants(ccRBTreeNode_t* a);
 
-void dbg_printTransitionList(ccList_t* list)
-{
-    dfa_transition_t* transition = NULL;
+static void dbg_printTransition(dfa_transition_t* transition);
+static void dbg_printTransitionList(ccList_t* list);
+static void dbg_printStates(dfa_t* dfa);
+static void dbg_printSetData(void* data);
+static void dbg_printAuxCharSet(void* data);
 
-    ccLogDebug("LINKAGE START");
-    for(size_t j = 0; j < list->size; ++j){
-        transition = (dfa_transition_t*)ccList_itemAt(list, j);
-        dbg_printTransition(transition);
-    }
-    ccLogDebug("LINKAGE END");
-}
+static int compareSetsImpl(ccRBTreeNode_t* a, ccRBTreeNode_t* b, int(*compare_fn)(void*, void*));
+static int compareSets(void* a, void* b);
+static int compareStates(void* a, void* b);
+static int compareByChar(void* a, void* b);
 
-void dbg_printStates(dfa_t* dfa)
-{
-    ccList_t* list = NULL;
+dfa_state_t* dfa_state_ctor(stateType_t state, ccRBTree_t* set);
+dfa_transition_t* dfa_transition_ctor(dfa_state_t* fromState, dfa_state_t* toState, char isComplement, char symbol);
+dfa_t* dfa_ctor();
 
-    for(size_t i = 0; i < dfa->states->size; ++i){
-        list = *(ccList_t**)ccDynamicArray_get(dfa->states, i);
-        if(list == NULL)
-            continue;
-        dbg_printTransitionList(list);
-    }
-}
+void dfa_dtor(dfa_t* dfa);
+void dfa_state_dtor(dfa_state_t* data);
+void dfa_transition_dtor(dfa_transition_t* data);
 
-void dbg_printSetData(void* data)
-{
-    int state = *(int*)data;
-
-    ccLogDebug("%d ", state);
-}
-
-int compareNFATransitions(void* a, void* b)
-{
-    return memcmp(a, b, sizeof(nfa_transition_t));
-}
-
-static inline int hasDescendants(ccRBTreeNode_t* a)
-{
-    if(a->left == NULL && a->right == NULL)
-        return 0;
-    return 1;
-}
-
-int compareSetsImpl(ccRBTreeNode_t* a, ccRBTreeNode_t* b, int(*compare_fn)(void*, void*))
-{
-    int status = 0;
-
-    if(a == NULL && b == NULL)
-        return 0;
-    if(a != NULL && b == NULL)
-        return 1;
-    if(b != NULL && a == NULL)
-        return -1;
-
-    if(!hasDescendants(a) && !hasDescendants(b))
-        return (stateType_t)(a->item) - (stateType_t)(b->item);
-
-    status = compareSetsImpl(a->left, b->left, compare_fn);
-    if(status == 0)
-        status = compareSetsImpl(a->right, b->right, compare_fn);
-
-    return status;    
-}
-
-int compareSets(void* a, void* b)
-{
-    ccRBTree_t* A = ((dfa_state_t*)a)->set;
-    ccRBTree_t* B = ((dfa_state_t*)b)->set;
-
-    if(A == B)
-        return 0;
-
-    return compareSetsImpl(A->head, B->head, compareSets);
-}
-
-void dbg_printStateSet(void* data)
-{
-    ccRBTree_t* set = (ccRBTree_t*)((dfa_state_t*)data)->set;
-    stateType_t stateId = (stateType_t)((dfa_state_t*)data)->state;
-
-    ccLogDebug("Printing Set with ID %ld:", stateId);
-    dbg_printSet(set, dbg_printSetData);
-}
-
-void dbg_printAuxCharSet(void* data)
-{
-    ccRBTreeNode_t* node = (ccRBTreeNode_t*)data;
-    ccLogDebug("START Printing tree node");
-    ccLogDebug("key %c", *(char*)node->key);
-    dbg_printTransitionList((node->item));
-    ccLogDebug("END Printing tree node");
-}
-
-/* TODO: fix memleaks */
 dfa_t* buildDFA(nfa_t* nfa)
 {
     bool hasAcceptState = false;
@@ -183,7 +92,7 @@ dfa_t* buildDFA(nfa_t* nfa)
                     }else{
                         toState = (dfa_state_t*)(auxSetNode->item);
                     }
-                    dfa_transition = dfa_transition_ctor(fromState, toState, nfa_transition->isComplement, nfa_transition->isEpsilon, nfa_transition->symbol);
+                    dfa_transition = dfa_transition_ctor(fromState, toState, nfa_transition->isComplement, nfa_transition->symbol);
                     /* insert transition into ccDynamicArray_t* states; */
                     list = *(ccList_t**)ccDynamicArray_get(dfa->states, dfa_transition->fromState->state);
                     if(list == NULL){
@@ -224,70 +133,6 @@ dfa_t* buildDFA(nfa_t* nfa)
     return dfa;
 }
 
-dfa_t* dfa_ctor()
-{
-    dfa_t* dfa;
-    expectExit(dfa, malloc(sizeof(dfa_t)), != NULL);
-
-    dfa->start = 0;
-    dfa->acceptStates = ccRBTree_ctor(0, compareStates);
-    dfa->states = ccDynamicArray_ctor(sizeof(ccList_t*), true);
-    dfa->auxTransitionsOnChar = ccRBTree_ctor(1, compareByChar);
-    dfa->setList = ccList_ctor();
-
-    // todo: create set list and free the sets once, you have the issue that you doble free
-
-    return dfa;
-}
-
-void dfa_dtor(dfa_t* dfa)
-{
-    ccList_t* list;
-
-    ccRBTree_dtor(dfa->acceptStates);
-    ccRBTree_dtor(dfa->auxTransitionsOnChar);
-    for(size_t i = 0; i < dfa->states->size; ++i){
-        list = *(ccList_t**)ccDynamicArray_get(dfa->states, i);
-        if(list == NULL)
-            continue;
-        ccList_dtor(list);
-    }
-    ccDynamicArray_dtor(dfa->states);
-    ccList_dtor(dfa->setList);
-    free(dfa->startState);
-    free(dfa);
-}
-
-/* TODO: could be just return (int)(a-b); */
-int compareStates(void* a, void* b)
-{
-    stateType_t A, B;
-    
-    A = *(stateType_t*)a;
-    B = *(stateType_t*)b;
-
-    if(A > B)
-        return 1;
-    if(B > A)
-        return -1;
-    return 0;
-}
-
-int compareByChar(void* a, void* b)
-{
-    char A = *(char*)a;
-    char B = *(char*)b;
-
-    return A - B;
-}
-
-static inline int doFollow(ccRBTree_t* set, nfa_transition_t* transition)
-{
-    if(transition->isEpsilon && ccRBTree_find(set, &transition->toState) == NULL)
-        return 1;
-    return 0;
-}
-
 /* TODO: If you verify that there is no possibility for a epsilon cycle forming in the NFAs, you can 
  * remove the check that looks into the set to see if the node has already been visited.
  * There's also the possibility of building the whole list at once and referencing it. That might solve
@@ -299,6 +144,8 @@ ccRBTree_t* followEpsilon(nfa_t* nfa, stateType_t* stateIndex, bool* hasAcceptSt
     ccStack_t* stack = ccStack_ctor(256, NULL);
     ccRBTree_t* set = ccRBTree_ctor(0, compareStates);
     
+    if(*stateIndex == ((nfa_transition_t*)(nfa->accept->data))->toState)
+        *hasAcceptState = true;
     ccRBTree_insert(set, ccRBTreeNode_ctor(stateIndex, NULL, NULL, NULL));
     state = *(ccListNode_t**)ccDynamicArray_get(nfa->states, *stateIndex);
     ccStack_push(stack, state);
@@ -323,6 +170,125 @@ ccRBTree_t* followEpsilon(nfa_t* nfa, stateType_t* stateIndex, bool* hasAcceptSt
     return set;
 }
 
+static inline int doFollow(ccRBTree_t* set, nfa_transition_t* transition)
+{
+    if(transition->isEpsilon && ccRBTree_find(set, &transition->toState) == NULL)
+        return 1;
+    return 0;
+}
+
+static inline int hasDescendants(ccRBTreeNode_t* a)
+{
+    if(a->left == NULL && a->right == NULL)
+        return 0;
+    return 1;
+}
+
+static void dbg_printTransition(dfa_transition_t* transition)
+{
+    ccLogDebug(
+        "\n\tfromState: \t%ld\n"
+        "\ttoState: \t%ld\n"
+        "\tisCompl: \t%s\n"
+        "\tsymbol: \t%c (0x%x)\n",
+        transition->fromState->state,
+        transition->toState->state,
+        (int)transition->isComplement ? "True" : "False",
+        transition->symbol,
+        transition->symbol
+    );
+}
+
+static void dbg_printTransitionList(ccList_t* list)
+{
+    dfa_transition_t* transition = NULL;
+
+    ccLogDebug("LINKAGE START");
+    for(size_t j = 0; j < list->size; ++j){
+        transition = (dfa_transition_t*)ccList_itemAt(list, j);
+        dbg_printTransition(transition);
+    }
+    ccLogDebug("LINKAGE END");
+}
+
+static void dbg_printStates(dfa_t* dfa)
+{
+    ccList_t* list = NULL;
+
+    for(size_t i = 0; i < dfa->states->size; ++i){
+        list = *(ccList_t**)ccDynamicArray_get(dfa->states, i);
+        if(list == NULL)
+            continue;
+        dbg_printTransitionList(list);
+    }
+}
+
+static void dbg_printSetData(void* data)
+{
+    int state = *(int*)data;
+
+    ccLogDebug("%d ", state);
+}
+
+static void dbg_printAuxCharSet(void* data)
+{
+    ccRBTreeNode_t* node = (ccRBTreeNode_t*)data;
+    ccLogDebug("START Printing tree node");
+    ccLogDebug("key %c", *(char*)node->key);
+    dbg_printTransitionList((node->item));
+    ccLogDebug("END Printing tree node");
+}
+
+static int compareSetsImpl(ccRBTreeNode_t* a, ccRBTreeNode_t* b, int(*compare_fn)(void*, void*))
+{
+    int status = 0;
+
+    if(a == NULL && b == NULL)
+        return 0;
+    if(a != NULL && b == NULL)
+        return 1;
+    if(b != NULL && a == NULL)
+        return -1;
+
+    if(!hasDescendants(a) && !hasDescendants(b))
+        return (stateType_t)(a->item) - (stateType_t)(b->item);
+
+    status = compareSetsImpl(a->left, b->left, compare_fn);
+    if(status == 0)
+        status = compareSetsImpl(a->right, b->right, compare_fn);
+
+    return status;    
+}
+
+static int compareSets(void* a, void* b)
+{
+    ccRBTree_t* A = ((dfa_state_t*)a)->set;
+    ccRBTree_t* B = ((dfa_state_t*)b)->set;
+
+    if(A == B)
+        return 0;
+
+    return compareSetsImpl(A->head, B->head, compareSets);
+}
+
+static int compareStates(void* a, void* b)
+{
+    stateType_t A, B;
+    
+    A = *(stateType_t*)a;
+    B = *(stateType_t*)b;
+
+    return (int)(A-B);
+}
+
+static int compareByChar(void* a, void* b)
+{
+    char A = *(char*)a;
+    char B = *(char*)b;
+
+    return A - B;
+}
+
 dfa_state_t* dfa_state_ctor(stateType_t state, ccRBTree_t* set)
 {
     dfa_state_t* newState;
@@ -333,13 +299,7 @@ dfa_state_t* dfa_state_ctor(stateType_t state, ccRBTree_t* set)
     return newState;
 }
 
-void dfa_state_dtor(dfa_state_t* data)
-{
-    // we free the sets in another function.
-    // free(data);
-}
-
-dfa_transition_t* dfa_transition_ctor(dfa_state_t* fromState, dfa_state_t* toState, char isComplement, char isEpsilon, char symbol)
+dfa_transition_t* dfa_transition_ctor(dfa_state_t* fromState, dfa_state_t* toState, char isComplement, char symbol)
 {
     dfa_transition_t* transition;
     
@@ -347,10 +307,47 @@ dfa_transition_t* dfa_transition_ctor(dfa_state_t* fromState, dfa_state_t* toSta
     transition->fromState = fromState;
     transition->toState = toState;
     transition->isComplement = isComplement;
-    transition->isEpsilon = isEpsilon;
     transition->symbol = symbol;
 
     return transition;
+}
+
+dfa_t* dfa_ctor()
+{
+    dfa_t* dfa;
+    expectExit(dfa, malloc(sizeof(dfa_t)), != NULL);
+
+    dfa->start = 0;
+    dfa->acceptStates = ccRBTree_ctor(0, compareStates);
+    dfa->states = ccDynamicArray_ctor(sizeof(ccList_t*), true);
+    dfa->auxTransitionsOnChar = ccRBTree_ctor(1, compareByChar);
+    dfa->setList = ccList_ctor();
+
+    return dfa;
+}
+
+void dfa_dtor(dfa_t* dfa)
+{
+    ccList_t* list;
+
+    ccRBTree_dtor(dfa->acceptStates);
+    ccRBTree_dtor(dfa->auxTransitionsOnChar);
+    for(size_t i = 0; i < dfa->states->size; ++i){
+        list = *(ccList_t**)ccDynamicArray_get(dfa->states, i);
+        if(list == NULL)
+            continue;
+        ccList_dtor(list);
+    }
+    ccDynamicArray_dtor(dfa->states);
+    ccList_dtor(dfa->setList);
+    free(dfa->startState);
+    free(dfa);
+}
+
+void dfa_state_dtor(dfa_state_t* data)
+{
+    // we free the sets and states in another function.
+    // free(data);
 }
 
 void dfa_transition_dtor(dfa_transition_t* data)

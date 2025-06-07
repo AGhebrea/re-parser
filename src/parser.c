@@ -16,8 +16,6 @@ extern lexer_t lexer;
 // todo: create error signalling mechanism
 // todo: you could cache the token that you peeked and return that if you 
 // peek multiple times
-// todo: we cannot easily parse +- chars, and etc. We could easily do it if we had 
-// stuff like major:minor token types. 
 
 char parseCharacter();
 size_t parseUInt();

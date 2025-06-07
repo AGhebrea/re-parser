@@ -14,8 +14,6 @@ typedef struct dfa_transition{
     dfa_state_t* fromState;
     dfa_state_t* toState;
     char isComplement;
-    // todo: remove isepsilon as the whole point of what we are doing is to remove them from graph
-    char isEpsilon;
     char symbol;
 }dfa_transition_t;
 
@@ -52,5 +50,5 @@ void dfa_dtor(dfa_t* data);
 dfa_state_t* dfa_state_ctor(stateType_t state, ccRBTree_t* set);
 void dfa_state_dtor(dfa_state_t* data);
 
-dfa_transition_t* dfa_transition_ctor(dfa_state_t* fromState, dfa_state_t* toState, char isComplement, char isEpsilon, char symbol);
+dfa_transition_t* dfa_transition_ctor(dfa_state_t* fromState, dfa_state_t* toState, char isComplement, char symbol);
 void dfa_transition_dtor(dfa_transition_t* data);
