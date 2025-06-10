@@ -38,7 +38,7 @@ void nfa_shallowDtor(nfa_t* data);
 void dbg_printNFA(nfa_t* nfa);
 void dbg_printNFAStates(nfa_t* nfa);
 
-void fixupStates(nfa_t* nfa);
+static void fixupStates(nfa_t* nfa);
 
 nfa_t* copyNFA(stateType_t* indexState, nfa_t* nfa){
     ccListNode_t* node = NULL;
@@ -409,8 +409,6 @@ nfa_t* buildNFA_Concatenation(stateType_t* indexState, expressionConcatenation_t
     case typeConcatenation_ConcatentationClosure:
         nfa_concatenation = buildNFA_Concatenation(indexState, expression->concatenation);
         nfa_closure = buildNFA_Closure(indexState, expression->closure);
-        // opConcatenation(indexState, nfa_concatenation, nfa_closure);
-        // nfa_result = nfa_concatenation;
         opConcatenation(indexState, nfa_closure, nfa_concatenation);
         nfa_result = nfa_closure;
         break;
@@ -439,8 +437,6 @@ nfa_t* buildNFA_Alternation(stateType_t* indexState, expressionAlternation_t* ex
     case typeAlternation_AlternationConcatenation:
         nfa_concatenation = buildNFA_Concatenation(indexState, expression->concatenation);
         nfa_alternation = buildNFA_Alternation(indexState, expression->alternation);
-        // opAlternation(indexState, nfa_concatenation, nfa_alternation);
-        // nfa_result = nfa_concatenation;
         opAlternation(indexState, nfa_alternation, nfa_concatenation);
         nfa_result = nfa_alternation;
         break;
@@ -562,7 +558,7 @@ static void dbg_printTransition(nfa_transition_t* transition)
 }
 
 /* This functions sorts ll nodes by fromState and populates the states data structure */
-void fixupStates(nfa_t* nfa)
+static void fixupStates(nfa_t* nfa)
 {
     ccListNode_t* node = NULL;
     ccListNode_t* representative = NULL;

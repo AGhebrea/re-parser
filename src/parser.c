@@ -484,8 +484,9 @@ fail:
 void parse(char* filename)
 {
     expressionRegularExpression_t* regularExpression;
-    nfa_t* nfa;
-    dfa_t* dfa;
+    nfa_t* NFA;
+    dfa_t* DFA;
+    dfa_t* minDFA;
 
     ctor_lexer(filename);
 
@@ -499,11 +500,13 @@ void parse(char* filename)
         }else{
             if(regularExpression->type != typeRegularExpression_Empty){
                 dbg_printRE(regularExpression);
-                nfa = buildNFA(regularExpression);
-                dfa = buildDFA(nfa);
-                // minimizeDFA(dfa);
-                nfa_dtor(nfa);
-                dfa_dtor(dfa);
+                NFA = buildNFA(regularExpression);
+                DFA = buildDFA(NFA);
+                minDFA = minimizeDFA(DFA);
+                dbg_printDFA(minDFA);
+                nfa_dtor(NFA);
+                dfa_dtor(DFA);
+                dfa_dtor(minDFA);
 
             }
             dtor_expressionRegularExpression(regularExpression);
