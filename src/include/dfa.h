@@ -17,24 +17,11 @@ typedef struct dfa_transition{
     char symbol;
 }dfa_transition_t;
 
-/* We need to store:
- * - transitions
- * - states
- * - start state
- * - accept state list
- * We must be able to:
- * - iterate over states, a ll would be ok
- * - find a transition for a particular state, that means
- * that we need to do a fixup again and store the states like in the nfa.
- * - for the set minimization we theoretically have to be able
- * to find transitions by chars. this means that we will store 
- * an aux DS, that is a RBTree which has a key a char, and returns a ll of
- * all transitions containing that char. it might be a really bombastic thing 
- * to do but idk. btw the rbtree has to store copies of the ll nodes */
 typedef struct dfa{
     stateType_t start;
     ccRBTree_t* acceptStates;
-    ccDynamicArray_t* states;
+    ccDynamicArray_t* transitions;
+    ccList_t* states;
     /* really bombastic stuff */
     ccRBTree_t* auxTransitionsOnChar;
     /* used for freeing memory */
@@ -44,6 +31,8 @@ typedef struct dfa{
 }dfa_t;
 
 dfa_t* buildDFA(nfa_t* nfa);
+void minimizeDFA(dfa_t* dfa);
+
 dfa_t* dfa_ctor();
 void dfa_dtor(dfa_t* data);
 

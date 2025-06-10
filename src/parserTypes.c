@@ -5,6 +5,7 @@
 #include "cclog.h"
 #include "cclog_macros.h"
 #include <parserTypes.h>
+#include <ccstd.h>
 
 void dbg_printCaptureGroup(expressionCaptureGroup_t* expression, size_t level);
 void dbg_printTerm(expressionTerm_t* expression, size_t level);

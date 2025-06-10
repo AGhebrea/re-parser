@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include <cclog.h>
+#include <ccstd.h>
 #include <lexer.h>
 
 lexer_t lexer;
