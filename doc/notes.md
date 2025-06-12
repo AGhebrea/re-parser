@@ -10,3 +10,11 @@ W/O optimization    | W/ optimization   | size
   0m18.623s         | 0m14.043s         | 100Mb file
 As a side note, if I rember correctly, GCC with C compiler does a **similar** thing in 1.1Gb in 18 seconds so we are 10 times
 worse than the GCC C compiler, which is ok
+
+# Minimal DFA construction
+Parsing the benchmark.cfg file took this much time:
+We still need to implement two optimizations
+
+real	4m40.470s
+user	4m37.626s
+sys	0m1.879s
