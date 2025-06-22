@@ -59,6 +59,11 @@ struct lexer{
     bool lexerEOF;
     FILE* file;
     char* fileName;
+    // debug instrumentation
+    size_t lastLoadSize;
+    size_t lastLoadPos;
+    size_t beforeLastLoadFilePos;
+    bool cacheValid;
 };
 
 void lexer_nextToken(lexer_t* lexer, token_t*);
