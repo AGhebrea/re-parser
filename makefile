@@ -11,7 +11,7 @@ TEST_MAIN_FILE:=./test/main.c
 TEST_FILES:=$(wildcard ./test/*.c)
 TEST_FILES:=$(filter-out ${TEST_MAIN_FILE}, $(TEST_FILES))
 
-RRFILE:=/tmp/rr-output.txt
+RRFILE=/home/alex/.local/share/rr/${RRTARGET}-0
 
 .PHONY: all
 all: 
@@ -32,8 +32,3 @@ debug: ${BUILD_OUTPUT}
 test: ${TEST_MAIN_FILE} ${TEST_FILES} ${BUILD_FILES}
 	gcc ${TEST_MAIN_FILE} ${TEST_FILES} ${BUILD_FILES} -o ${TEST_OUTPUT} ${BUILD_FLAGS}
 	${TEST_OUTPUT}
-
-rr:
-	rr record -p 0 ${BUILD_OUTPUT} &> ${RRFILE}; wait
-	cat ${RRFILE} | head -n 1 | xargs -I {} rr replay {}
-	# rm ${RRFILE}

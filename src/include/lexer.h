@@ -61,9 +61,13 @@ struct lexer{
     char* fileName;
 };
 
-void lexer_nextToken(token_t*);
-void lexer_peekToken(token_t*);
-void ctor_lexer(char* filename);
-void dtor_lexer();
+void lexer_nextToken(lexer_t* lexer, token_t*);
+void lexer_peekToken(lexer_t* lexer, token_t*);
+void ctor_lexer(lexer_t* lexer, char* filename);
+void dtor_lexer(lexer_t* lexer);
 char* lexer_getTokenString(tokenMajor_t type);
 size_t toktouint(token_t* token);
+
+void rollBack(lexer_t* lexer);
+char nextChar(lexer_t* lexer);
+void rollBackBy(lexer_t* lexer, size_t rollBackSize);

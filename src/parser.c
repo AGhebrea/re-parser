@@ -11,7 +11,7 @@
 
 #define DO_NOTHING (void)0
 
-extern lexer_t lexer;
+lexer_t lexer;
 
 // todo: create error signalling mechanism
 // todo: you could cache the token that you peeked and return that if you 
@@ -44,12 +44,12 @@ size_t parseUInt()
     token_t token;
     size_t value = 0;
     
-    lexer_nextToken(&token);
+    lexer_nextToken(&lexer, &token);
     if(isdigit(token.value)){
         do{
             value = value * 10;
             value += (token.value) - '0';
-            lexer_nextToken(&token);
+            lexer_nextToken(&lexer, &token);
         }while(isdigit(token.value));
     }else{
         goto fail;
@@ -68,7 +68,7 @@ char parseCharacter()
     char value = '\0';
     token_t token;
 
-    lexer_nextToken(&token);
+    lexer_nextToken(&lexer, &token);
     if(token.major == tokenMajor_Character)
         value = token.value;
 
@@ -82,7 +82,7 @@ expressionCaptureGroup_t* parseCaptureGroup()
     expression = ctor_expressionCaptureGroup();
     expression->type = typeCaptureGroup_CaptureGroup;
 
-    lexer_nextToken(&token);
+    lexer_nextToken(&lexer, &token);
     if(token.major != tokenMajor_OpenBracket){
         printError("Expected OpenBracket");
         goto fail;
@@ -94,7 +94,7 @@ expressionCaptureGroup_t* parseCaptureGroup()
         goto fail;
     }
     for(size_t i = 0; i < 3; ++i){
-        lexer_nextToken(&token);
+        lexer_nextToken(&lexer, &token);
         if(token.minor != tokenMinor_Dot){
             printError("Expected Dot");
             goto fail;
@@ -105,7 +105,7 @@ expressionCaptureGroup_t* parseCaptureGroup()
         printError("Expected Character");
         goto fail;
     }
-    lexer_nextToken(&token);
+    lexer_nextToken(&lexer, &token);
     if(token.major != tokenMajor_CloseBracket){
         printError("Expected CloseBracket");
         goto fail;
@@ -127,19 +127,19 @@ expressionTerm_t* parseTerm()
 {
     expressionTerm_t* expression = NULL;
     token_t token;
-    lexer_peekToken(&token);
+    lexer_peekToken(&lexer, &token);
     expression = ctor_expressionTerm();
 
     switch(token.major){
     case tokenMajor_OpenParen:
         expression->type = typeTerm_RegularExpression;
-        lexer_nextToken(&token);
+        lexer_nextToken(&lexer, &token);
         expression->value.regularExpression = parseRegularExpressionPrime();
         if(expression->value.regularExpression == NULL){
             printError("Expected RegularExpression");
             goto fail;
         }
-        lexer_nextToken(&token);
+        lexer_nextToken(&lexer, &token);
         if(token.major != tokenMajor_CloseParen){
             printError("Expected CloseParen");
             goto fail;
@@ -163,7 +163,7 @@ expressionTerm_t* parseTerm()
         break;
     case tokenMajor_Epsilon:
         expression->type = typeTerm_Epsilon;
-        lexer_nextToken(&token);
+        lexer_nextToken(&lexer, &token);
         break;
     default:
         printError("Unknown Expression Type");
@@ -181,12 +181,12 @@ expressionComplement_t* parseComplement()
 {
     expressionComplement_t* expression = NULL;
     token_t token;
-    lexer_peekToken(&token);
+    lexer_peekToken(&lexer, &token);
     expression = ctor_expressionComplement();
 
     switch(token.major){
     case tokenMajor_Complement:
-        lexer_nextToken(&token);
+        lexer_nextToken(&lexer, &token);
         expression->type = typeComplement_Complement;
         expression->term = parseTerm();
         if(expression->term == NULL){
@@ -220,7 +220,7 @@ expressionClosure_t* parseClosure()
     expressionClosure_t* expression = NULL;
     token_t token;
     expression = ctor_expressionClosure();
-    lexer_peekToken(&token);
+    lexer_peekToken(&lexer, &token);
 
     switch(token.major){
     case tokenMajor_Complement:
@@ -233,17 +233,17 @@ expressionClosure_t* parseClosure()
             printError("Expected Complement");
             goto fail;
         }
-        lexer_peekToken(&token);
+        lexer_peekToken(&lexer, &token);
         switch(token.major){
         case tokenMajor_Character:
             switch(token.minor){
             case tokenMinor_Star:
                 expression->type = typeClosure_Kleene;
-                lexer_nextToken(&token);
+                lexer_nextToken(&lexer, &token);
                 break;
             case tokenMinor_Plus:
                 expression->type = typeClosure_Positive;
-                lexer_nextToken(&token);
+                lexer_nextToken(&lexer, &token);
                 break;
             default:
                 expression->type = typeClosure_Complement;
@@ -252,9 +252,9 @@ expressionClosure_t* parseClosure()
             break;
         case tokenMajor_OpenCurly:
             expression->type = typeClosure_Explicit;
-            lexer_nextToken(&token);
+            lexer_nextToken(&lexer, &token);
             expression->repetitionNumber = parseUInt();
-            lexer_nextToken(&token);
+            lexer_nextToken(&lexer, &token);
             if(token.major != tokenMajor_CloseCurly){
                 printError("CloseCurly");
                 goto fail;
@@ -291,7 +291,7 @@ expressionConcatenation_t* parseConcatenation()
 {
     expressionConcatenation_t* expression = NULL;
     token_t token;
-    lexer_peekToken(&token);
+    lexer_peekToken(&lexer, &token);
     expression = ctor_expressionConcatenation();
 
     switch(token.major){
@@ -338,11 +338,11 @@ expressionAlternation_t* parseAlternationPrime()
 {
     expressionAlternation_t* expression = NULL;
     token_t token;
-    lexer_peekToken(&token);
+    lexer_peekToken(&lexer, &token);
 
     switch(token.major){
     case tokenMajor_Or:
-        lexer_nextToken(&token);
+        lexer_nextToken(&lexer, &token);
         expression = parseAlternation();
         if(expression == NULL){
             printError("Expected Alternation");
@@ -369,7 +369,7 @@ expressionAlternation_t* parseAlternation()
 {
     expressionAlternation_t* expression = NULL;
     token_t token;
-    lexer_peekToken(&token);
+    lexer_peekToken(&lexer, &token);
     expression = ctor_expressionAlternation();
 
     switch(token.major){
@@ -404,7 +404,7 @@ expressionRegularExpression_t* parseRegularExpressionPrime()
 {
     expressionRegularExpression_t* expression = NULL;
     token_t token;
-    lexer_peekToken(&token);
+    lexer_peekToken(&lexer, &token);
     expression = ctor_expressionRegularExpression();
 
     switch(token.major){
@@ -440,7 +440,7 @@ expressionRegularExpression_t* parseRegularExpression()
 {
     expressionRegularExpression_t* expression = NULL;
     token_t token;
-    lexer_peekToken(&token);
+    lexer_peekToken(&lexer, &token);
 
     switch(token.major){
     case tokenMajor_Complement:
@@ -450,9 +450,9 @@ expressionRegularExpression_t* parseRegularExpression()
     /* Diverged from grammar */
     case tokenMajor_Epsilon:
         expression = parseRegularExpressionPrime();
-        lexer_peekToken(&token);
+        lexer_peekToken(&lexer, &token);
         if(token.major == tokenMajor_ExpressionSeparator){
-            lexer_nextToken(&token);
+            lexer_nextToken(&lexer, &token);
         }else if(token.major == tokenMajor_EOF){
             DO_NOTHING;
         }else{
@@ -463,7 +463,7 @@ expressionRegularExpression_t* parseRegularExpression()
     case tokenMajor_ExpressionSeparator:
         expression = ctor_expressionRegularExpression();
         expression->type = typeRegularExpression_Empty;
-        lexer_nextToken(&token);
+        lexer_nextToken(&lexer, &token);
         break;
     case tokenMajor_EOF:
         expression = ctor_expressionRegularExpression();
@@ -488,7 +488,7 @@ void parse(char* filename)
     dfa_t* DFA;
     dfa_t* minDFA;
 
-    ctor_lexer(filename);
+    ctor_lexer(&lexer, filename);
 
     while(true){
         regularExpression = parseRegularExpression();
@@ -514,5 +514,5 @@ void parse(char* filename)
     }
 
     dtor_expressionRegularExpression(regularExpression);
-    dtor_lexer();
+    dtor_lexer(&lexer);
 }
