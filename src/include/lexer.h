@@ -73,6 +73,5 @@ void dtor_lexer(lexer_t* lexer);
 char* lexer_getTokenString(tokenMajor_t type);
 size_t toktouint(token_t* token);
 
-void rollBack(lexer_t* lexer);
 char nextChar(lexer_t* lexer);
 void rollBackBy(lexer_t* lexer, size_t rollBackSize);

@@ -117,8 +117,6 @@ char nextChar(lexer_t* lexer)
     return character;
 }
 
-void rollBack(lexer_t *lexer){}
-
 /* - first buffer is delimited from [0, 0x7fe)
  * - second buffer is [0x7fe, 0xffe) */
 static inline bool isFirstBuffer(size_t index, size_t bufferCap)
@@ -498,8 +496,7 @@ void lexer_peekToken(lexer_t* lexer, token_t* token)
     size_t initialCharCount = lexer->charCount;
     lexer_nextToken(lexer, token);
     size_t finalCharCount = lexer->charCount;
-    for(size_t i = initialCharCount; i < finalCharCount; ++i)
-        rollBack(lexer);
+    rollBackBy(lexer, finalCharCount - initialCharCount);
 }
 
 char* lexer_getTokenString(tokenMajor_t type)
