@@ -1,7 +1,7 @@
 # generic makefile
 
 BUILD_OUTPUT:=./bin/executable
-BUILD_FLAGS:=-lm -I/usr/include/ccommon/ -I./src/include -L/usr/lib/ccommon -lcclog -lccstd -Wall -ggdb3
+BUILD_FLAGS:=-lm -I/usr/include/ccommon/ -I./src/include -L/usr/lib/ccommon -lcclog -lccstd -Wall -ggdb3 -DDEBUG
 BUILD_MAIN_FILE:=./src/main.c
 BUILD_FILES:=$(wildcard ./src/*.c)
 BUILD_FILES:=$(filter-out ${BUILD_MAIN_FILE}, $(BUILD_FILES))
@@ -16,7 +16,6 @@ RRFILE=/home/alex/.local/share/rr/${RRTARGET}-0
 .PHONY: all
 all: 
 	$(MAKE) build
-	$(MAKE) test
 
 .PHONY: build
 build: ${BUILD_FILES} ${BUILD_MAIN_FILE}
