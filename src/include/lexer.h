@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <ccdebug.h>
 
 typedef struct token token_t;
 typedef struct lexer lexer_t;
@@ -50,7 +51,6 @@ struct token{
 struct lexer{
     char* buffer;
     size_t index;
-    size_t fence;
     size_t bufferCap;
     size_t bufferSize;
     size_t indexMask;
@@ -59,11 +59,11 @@ struct lexer{
     bool lexerEOF;
     FILE* file;
     char* fileName;
-    // debug instrumentation
-    size_t lastLoadSize;
-    size_t lastLoadPos;
-    size_t beforeLastLoadFilePos;
     bool cacheValid;
+DebugEnabled(
+    int lastLoadedBuffer;
+    size_t filePos;
+)
 };
 
 void lexer_nextToken(lexer_t* lexer, token_t*);

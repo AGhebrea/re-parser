@@ -1,7 +1,8 @@
 # generic makefile
 
 BUILD_OUTPUT:=./bin/executable
-BUILD_FLAGS:=-lm -I/usr/include/ccommon/ -I./src/include -L/usr/lib/ccommon -lcclog -lccstd -Wall -ggdb3 -DDEBUG
+BUILD_FLAGS:=-lm -I/usr/include/ccommon/ -I./src/include -L/usr/lib/ccommon -lcclog -lccstd -Wall -ggdb3
+BUILD_FLAGS:=${BUILD_FLAGS} -DDEBUG
 BUILD_MAIN_FILE:=./src/main.c
 BUILD_FILES:=$(wildcard ./src/*.c)
 BUILD_FILES:=$(filter-out ${BUILD_MAIN_FILE}, $(BUILD_FILES))

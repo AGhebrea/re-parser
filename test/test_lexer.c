@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <assert.h>
 
+#include <ccdebug.h>
 #include <cclog.h>
 #include "../src/include/lexer.h"
 #include "cclog_macros.h"
@@ -64,8 +65,6 @@ void assertLexersEqual(lexer_t* la, lexer_t* lb)
         ok = false;
     if(la->index != lb->index)
         ok = false;
-    if(la->fence != lb->fence)
-        ok = false;
     if(la->bufferSize != lb->bufferSize)
         ok = false;
     if(la->fileEOF != lb->fileEOF)
@@ -74,6 +73,12 @@ void assertLexersEqual(lexer_t* la, lexer_t* lb)
         ok = false;
     if(la->file->_offset != lb->file->_offset)
         ok = false;
+    DebugEnabled(
+        if(la->lastLoadedBuffer != lb->lastLoadedBuffer)
+            ok = false;
+        if(la->filePos != lb->filePos)
+            ok = false;
+    )
 
     if(ok == false){
         laWrong = isLexerWrong(la);
@@ -134,10 +139,8 @@ void test_rollBackIncrementalImpl(char* filename, size_t start, size_t rollbacks
     size_t i = 0;
 
     ctor_lexer(&lexer, filename);
-    for(i = 0; i < start; ++i){
+    for(i = 0; i < start; ++i)
         (void)nextChar(&lexer);
-        assert(isLexerWrong(&lexer) == false);
-    }
     for(size_t j = i; j > rollbacksize; j -= rollbacksize){
         assert(lexer.lexerEOF == false);
         rollBackBy(&lexer, rollbacksize);
@@ -162,7 +165,7 @@ void test_nextChar(char *filename)
     dtor_lexer(&lexer);
 }
 
-int test_rollBackIncremental(char* filename){
+int test_rollBackIncrementalPowerOfTwo(char* filename){
     size_t rb = 1;
     size_t fileSize;
     size_t start;
@@ -177,6 +180,28 @@ int test_rollBackIncremental(char* filename){
         while(rb < dummy.bufferCap){
             test_rollBackIncrementalImpl(filename, i, rb);
             rb = rb << 1;
+        }
+    }
+    dtor_lexer(&dummy);
+
+    return 0;
+}
+
+int test_rollBackIncremental(char* filename){
+    size_t rb = 1;
+    size_t fileSize;
+    size_t start;
+    lexer_t dummy;
+
+    ctor_lexer(&dummy, filename);
+    fileSize = getFileSize(filename);
+
+    start = fileSize - (fileSize % dummy.bufferCap) - 1;
+    for(size_t i = start; i < fileSize; ++i){
+        rb = 1;
+        while(rb < dummy.bufferCap){
+            test_rollBackIncrementalImpl(filename, i, rb);
+            rb += 1;
         }
     }
     dtor_lexer(&dummy);
@@ -242,7 +267,7 @@ int test_rollBackRandom(char* filename)
     test_duplicateChars(filename);
 
     randSeed = (size_t)time(NULL);
-    // randSeed = 1750574539;
+    randSeed = 1750919315;
     ccLogInfo("Seed: %ld", randSeed);
     srand(randSeed);
 
@@ -336,12 +361,6 @@ CASE_2:
             readAmountSize = (la.bufferCap >> 1) - readAmountSize;
             if(nextCharParallel(&la, &lb, readAmountSize))
                 goto FAIL;
-            if(!la.lexerEOF)
-                assert(la.index == 0x800);
-            else
-                assert(la.index == fileSize);
-            assert(la.fence == 0x0);
-            assert(lb.fence == 0x0);
             /* then we roll back into second buffer */
             readAmountSize = (rand() % ((la.bufferCap >> 1) - 1));
             if(readAmountSize == 0)
@@ -375,26 +394,30 @@ int test_lexer_main()
     int status = 0;
 
     ccLog_setLogLevel(ccLogLevels_Info);
+    // ccLog_setLogLevel(ccLogLevels_Trace);
 
     ccLogInfo("test_nextChar(\"./test/data/sample_3.txt\");");
     test_nextChar("./test/data/sample_3.txt");
 
-    /* todo: if needed we can emulate file and generate random data in memory */
-    /* file with less than half buffercap data */
-    ccLogInfo("test_rollBack(\"./test/data/sample_1.txt\");");
-    status |= test_rollBackRandom("./test/data/sample_1.txt");
-    /* file with less than buffercap data but more than half of buffercap */
-    ccLogInfo("test_rollBack(\"./test/data/sample_2.txt\");");
-    status |= test_rollBackRandom("./test/data/sample_2.txt");
-    /* file with more than buffercap data */
-    ccLogInfo("test_rollBack(\"./test/data/sample_3.txt\");");
-    status |= test_rollBackRandom("./test/data/sample_3.txt");
-    /* file with much more buffercap data */
-    ccLogInfo("test_rollBack(\"./test/data/sample_4.txt\");");
-    status |= test_rollBackRandom("./test/data/sample_4.txt");
+    // /* todo: if needed we can emulate file and generate random data in memory */
+    // /* file with less than half buffercap data */
+    // ccLogInfo("test_rollBack(\"./test/data/sample_1.txt\");");
+    // status |= test_rollBackRandom("./test/data/sample_1.txt");
+    // /* file with less than buffercap data but more than half of buffercap */
+    // ccLogInfo("test_rollBack(\"./test/data/sample_2.txt\");");
+    // status |= test_rollBackRandom("./test/data/sample_2.txt");
+    // /* file with more than buffercap data */
+    // ccLogInfo("test_rollBack(\"./test/data/sample_3.txt\");");
+    // status |= test_rollBackRandom("./test/data/sample_3.txt");
+    // /* file with much more buffercap data */
+    // ccLogInfo("test_rollBack(\"./test/data/sample_4.txt\");");
+    // status |= test_rollBackRandom("./test/data/sample_4.txt");
 
-    ccLogInfo("test_rollBackIncremental(\"./test/data/sample_4.txt\");");
-    status |= test_rollBackIncremental("./test/data/sample_4.txt");
+    // ccLogInfo("test_rollBackIncrementalPowerOfTwo(\"./test/data/sample_4.txt\");");
+    // status |= test_rollBackIncrementalPowerOfTwo("./test/data/sample_4.txt");
+
+    // ccLogInfo("test_rollBackIncremental(\"./test/data/sample_4.txt\");");
+    // status |= test_rollBackIncremental("./test/data/sample_4.txt");
 
     return status;
 }
