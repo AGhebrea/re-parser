@@ -14,6 +14,9 @@
 
 size_t loadBuffer(lexer_t* lexer, size_t index);
 
+/* TODO: as it stands now, the libc implementation is twice as fast 
+ * try implementing this directly w/ read/lseek system calls */
+
 void ctor_lexer(lexer_t* lexer, char* filename)
 {
     lexer->buffer = NULL;
