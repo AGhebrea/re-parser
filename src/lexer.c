@@ -54,6 +54,8 @@ void rollBackBy(lexer_t* lexer, size_t rollBackSize)
 {
     int status;
     size_t pos = ftell(lexer->file);
+
+    (void)status;
     if(rollBackSize > pos)
         rollBackSize = pos;
     lexer->charCount -= rollBackSize;
