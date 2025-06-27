@@ -120,7 +120,7 @@ static inline void rollBackOutsideOfCache(lexer_t* lexer, size_t rollBackSize)
     lexer->charCount -= rollBackSize;
     lexer->index = lexer->charCount & lexer->indexMask;
     seek = lexer->charCount - (lexer->index & (lexer->indexMask >> 1));
-    if(lexer->charCount > lexer->bufferSize >> 1)
+    if(lexer->charCount > lexer->bufferCap >> 1)
         haveCache = true;
     if(haveCache)
         seek -= lexer->bufferCap >> 1;
