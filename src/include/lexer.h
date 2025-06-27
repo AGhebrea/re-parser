@@ -49,21 +49,10 @@ struct token{
 };
 
 struct lexer{
-    char* buffer;
-    size_t index;
-    size_t bufferCap;
-    size_t bufferSize;
-    size_t indexMask;
-    size_t charCount;
-    bool fileEOF;
-    bool lexerEOF;
     FILE* file;
+    size_t charCount;
     char* fileName;
-    bool cacheValid;
-DebugEnabled(
-    int lastLoadedBuffer;
-    size_t filePos;
-)
+    bool lexerEOF;
 };
 
 void lexer_nextToken(lexer_t* lexer, token_t*);
